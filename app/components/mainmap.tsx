@@ -152,15 +152,15 @@ export default function MainMap() {
                         <h4 className="font-bold text-large">{cardData.name}</h4>
                         <p className="text-tiny uppercase font-bold">{cardData.description}</p>
                     </CardHeader>
-                    <CardBody className="overflow-visible py-2 flex flex-row">
+                    <CardBody className="overflow-visible py-2 flex flex-row items-center">
                         <Textarea
                             variant="underlined"
                             maxRows={2}
-                            label="매너 리뷰 부탁드립니다. 😉"
-                            placeholder=""
+                            label=""
+                            placeholder="매너 리뷰 부탁드립니다. 😉"
                         />
-                        <Button color="success" isIconOnly>
-                            <CameraIcon filled={4} size={24} height={2} width={2} label={undefined} />
+                        <Button color="primary" variant={"faded"} isIconOnly>
+                            <Image width={"24"} src="https://www.svgrepo.com/show/532154/check.svg"/>
                         </Button>
                     </CardBody>
                 </Card>
