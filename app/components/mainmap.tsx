@@ -1,7 +1,7 @@
-import {RFeature, RInteraction, RLayerVector, RMap, ROSM, ROverlay} from "rlayers";
+import {RFeature, RFeatureUIEvent, RInteraction, RLayerVector, RMap, ROSM, ROverlay} from "rlayers";
 import {fromLonLat} from "ol/proj";
 import {Geometry, LineString, Point} from "ol/geom";
-import {useCallback, useEffect, useState} from "react";
+import {React, useCallback, useEffect, useState} from "react";
 import {altShiftKeysOnly, click, never, shiftKeyOnly, singleClick} from "ol/events/condition";
 
 import {
@@ -23,6 +23,10 @@ import {Feature} from "ol";
 import {Card, CardBody, CardHeader} from "@nextui-org/card";
 import {signIn} from "@/app/auth";
 import {SignInButton} from "@/app/components/sign-in";
+import {SessionProvider} from "next-auth/react";
+import dayjs from "dayjs";
+
+import { CameraIcon } from "@/app/components/icon/camera-icon";
 
 interface Course {
     id: number;
@@ -76,10 +80,11 @@ export default function MainMap() {
 
     const { isOpen, onOpen, onClose } = useDisclosure();
     const initCourse: Course = {
+        date: "", description: "", extent: [],
         id: -1,
         name: '',
         address: '',
-        flatCoordinates: [],
+        flatCoordinates: []
     }
 
     const [course, setCourse] = useState(initCourse);
@@ -130,36 +135,45 @@ export default function MainMap() {
 
     // prisma 데이터 삽입처리
     const [isCardHidden, setCardHidden] = useState(false);
-    const [cardData, setCardData] = useState<object>({});
+    const [cardData, setCardData] = useState({
+        name: "",
+        createdAt: "",
+        description: "",
+    });
 
+    // @ts-ignore
     return (
         <>
             {
                 isCardHidden &&
                 <Card className="absolute z-40 w-96 py-4 bottom-0 mb-4 right-1/2 translate-x-1/2">
                     <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                        <small className="text-default-500">{cardData.date}</small>
+                        <small className="text-default-500">{cardData.createdAt}</small>
                         <h4 className="font-bold text-large">{cardData.name}</h4>
                         <p className="text-tiny uppercase font-bold">{cardData.description}</p>
                     </CardHeader>
-                    <CardBody className="overflow-visible py-2">
-                        <Image
-                            alt="Card background"
-                            className="object-cover rounded-xl"
-                            src="https://nextui.org/images/hero-card-complete.jpeg"
-                            width={270}
+                    <CardBody className="overflow-visible py-2 flex flex-row">
+                        <Textarea
+                            variant="underlined"
+                            maxRows={2}
+                            label="매너 리뷰 부탁드립니다. 😉"
+                            placeholder=""
                         />
+                        <Button color="success" isIconOnly>
+                            <CameraIcon filled={4} size={24} height={2} width={2} label={undefined} />
+                        </Button>
                     </CardBody>
                 </Card>
             }
 
 
-            <div className={"z-40 absolute top-4 right-4 flex flex-col gap-2"}>
-                <Button color={'primary'} onClick={(e: any) => {
-                    setDrawState(!isDrawState);
-                }}>그리기</Button>
-
-                <SignInButton />
+            <div className={"z-40 w-full absolute top-4 pr-4 flex justify-end"}>
+                <div className={"flex gap-2"}>
+                    {/*<Button color={'primary'} onClick={(e: any) => {*/}
+                    {/*    setDrawState(!isDrawState);*/}
+                    {/*}}>그리기</Button>*/}
+                    <SignInButton />
+                </div>
             </div>
 
 
@@ -233,8 +247,8 @@ export default function MainMap() {
                     {
                         current ? (
                             <div>
-                                <RFeature geometry={current.getGeometry()} onSingleClick={ async (e: any) => {
-                                    await fetch('/api/getSingleCourse', {
+                                <RFeature geometry={current.getGeometry()} onSingleClick={ (e: RFeatureUIEvent) => {
+                                    fetch('/api/getSingleCourse', {
                                         method: 'POST',
                                         body: JSON.stringify({
                                             id: e.target.getProperties().id,
@@ -243,10 +257,12 @@ export default function MainMap() {
                                     })
                                         .then(res => res.json())
                                         .then(data => {
-                                            console.log('data', data.content);
+
+                                            console.log('singleCourse', data);
+                                            data.content.createdAt = dayjs(data.createdAt).format('YYYY-MM-DD HH:mm:ss')
                                             setCardData(data.content);
                                             setCardHidden(true);
-                                        })
+                                        });
                                 }}
                                 properties={
                                     {
@@ -285,7 +301,8 @@ export default function MainMap() {
                                 return e.type === 'pointerdown';
                             }}
                             freehandCondition={never}
-                            onDrawEnd={(e)=> {
+                            onDrawEnd={(e: any)=> {
+                                // @ts-ignore
                                 setCourse({...course,
                                     flatCoordinates: e.feature.getGeometry().getCoordinates(),
                                     extent: e.feature.getGeometry().getExtent(),
@@ -310,7 +327,7 @@ export default function MainMap() {
                                         <Textarea isRequired type="text" name={"description"} label="설명"/>
                                     </div>
                                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mb-2 hidden">
-                                        <Input type="hidden" label="코스좌표" name={"flatCoordinates"} value={course.flatCoordinates} readOnly={true}/>
+                                        <Input type="hidden" label="코스좌표" name={"flatCoordinates"} value={(course.flatCoordinates).toString()} readOnly={true}/>
                                     </div>
 
                                     <div className="w-full h-48 mb-4">
