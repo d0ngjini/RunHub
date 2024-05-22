@@ -1,11 +1,26 @@
-import { PrismaClient } from "@prisma/client";
-import {NextResponse} from "next/server";
 import prisma from "@/app/prisma/db";
 import {auth} from "@/app/auth";
-import {Simulate} from "react-dom/test-utils";
+import dayjs from "dayjs";
+
+export async function GET() {
+    const courses = await prisma.course.findMany({
+        // include: {
+        //     reviews: true,
+        // }
+    });
+
+    courses.forEach((c: any) => {
+        const convertedDate = dayjs(c.createdAt).format('YYYY-MM-DD HH:mm:ss');
+        c.convertedDate = convertedDate;
+    });
+
+    return Response.json({
+        status: 200,
+        content: courses
+    });
+}
 
 export async function POST(request: Request) {
-    const response = new NextResponse();
     const session = await auth();
 
     console.log('session', session);
@@ -31,7 +46,7 @@ export async function POST(request: Request) {
     } else {
         return Response.json({
             status: 404,
-            message: 'failed to create course.',
+            message: 'failed to create courses.',
         });
     }
 }

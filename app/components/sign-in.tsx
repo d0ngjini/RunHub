@@ -3,7 +3,6 @@
 import {signIn, useSession} from "next-auth/react"
 import {Button} from "@nextui-org/react";
 import Avatar from 'boring-avatars';
-import {auth, signOut} from "@/app/auth";
 
 export function SignInButton() {
     const { data: session } = useSession();
