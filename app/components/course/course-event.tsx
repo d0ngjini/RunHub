@@ -1,12 +1,8 @@
 import {RFeature, RFeatureUIEvent, RLayerVector} from "rlayers";
 import dayjs from "dayjs";
-import {RStroke, RStyle, RStyleArray, useRStyle} from "rlayers/style";
-import {useCallback} from "react";
-import {Feature} from "ol";
-import {Geometry} from "ol/geom";
 
 export default function CourseEvent(props: any) {
-    const { current, currentStyles, setCardData, setCardHidden } = props;
+    const { current, currentStyles, setCardData, setCardHidden, getSingleCourse } = props;
 
     return (
         <>
@@ -15,15 +11,7 @@ export default function CourseEvent(props: any) {
                     current ? (
                         <div>
                             <RFeature geometry={current.getGeometry()} onSingleClick={(e: RFeatureUIEvent) => {
-                                fetch('/api/courses/' + e.target.getProperties().id, {
-                                    method: 'GET',
-                                })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        data.content.createdAt = dayjs(data.createdAt).format('YYYY-MM-DD HH:mm:ss')
-                                        setCardData(data.content);
-                                        setCardHidden(true);
-                                    });
+                                getSingleCourse(e.target.getProperties().id)
                             }}
                                       properties={
                                           {

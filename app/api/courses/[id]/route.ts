@@ -16,7 +16,18 @@ export async function GET(request: NextRequest, { params }: {
             // name: param.name,
         },
         include: {
-            reviews: true,
+            courseComments: {
+                orderBy: {
+                  createdAt: 'desc'
+                },
+                include: {
+                    User: {
+                        select: {
+                            name: true,
+                        }
+                    },
+                }
+            }
         }
     });
 

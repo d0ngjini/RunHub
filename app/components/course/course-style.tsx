@@ -1,6 +1,3 @@
-import {Card, CardBody, CardHeader} from "@nextui-org/card";
-import ReviewList from "@/app/components/review-list";
-import {Button, Image, Textarea} from "@nextui-org/react";
 import {RStroke, RStyle, RStyleArray} from "rlayers/style";
 import {useCallback} from "react";
 import {Feature} from "ol";

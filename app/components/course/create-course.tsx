@@ -1,4 +1,4 @@
-import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Textarea, useDisclosure} from "@nextui-org/react";
+import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Textarea} from "@nextui-org/react";
 import {RFeature, RLayerVector, RMap, ROSM} from "rlayers";
 import {fromLonLat} from "ol/proj";
 import {LineString, Point} from "ol/geom";
@@ -7,7 +7,7 @@ import {useState} from "react";
 
 export default function CreateCourse(props: any) {
     const [isSetDefaultLocation, setDefaultLocation] = useState(false);
-    const { drawnCourse, isOpen, onClose, setDrawState, getCourses } = props;
+    const { drawnCourse, setDrawnCourse,isOpen, onClose, setDrawState, getCourses } = props;
 
     const onOpenChange = async function (isOpen: boolean) {
         if (isOpen) {
@@ -15,6 +15,9 @@ export default function CreateCourse(props: any) {
         } else {
             onClose();
             setDefaultLocation(false);
+            getCourses();
+            setDrawState(false);
+            setDrawnCourse(null)
         }
     };
 
@@ -51,7 +54,7 @@ export default function CreateCourse(props: any) {
 
     return (
         <>
-            <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+            <Modal isOpen={isOpen} onOpenChange={onOpenChange} isDismissable={false}>
                 <ModalContent>
                     {(onClose) => (
                         <>

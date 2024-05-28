@@ -14,32 +14,30 @@ datasource db {
 }
 
 model Course {
-  id              String   @id @default(cuid())
+  id              String          @id @default(cuid())
   name            String
   address         String?
-  flatCoordinates String   @map("flat_coordinates")
+  flatCoordinates String          @map("flat_coordinates")
   extent          String?
-  description     String   @db.Text
-  createdAt       DateTime @map("created_at")
-  reviews         Review[]
-  User            User?    @relation(fields: [userId], references: [id])
+  description     String          @db.Text
+  createdAt       DateTime        @map("created_at")
+  courseComments  CourseComment[]
+  User            User?           @relation(fields: [userId], references: [id])
   userId          String?
 
   @@map("courses")
 }
 
-model Review {
+model CourseComment {
   id        String   @id @default(cuid())
   courseId  String   @map("course_id")
-  author    String
-  title     String
-  content   String
-  createdAt DateTime @map("created_atw")
+  authorId  String   @map("user_id")
+  comment   String
+  createdAt DateTime @map("created_at")
   Course    Course   @relation(fields: [courseId], references: [id])
-  User      User?    @relation(fields: [userId], references: [id])
-  userId    String?  @map("user_id")
+  User      User?    @relation(fields: [authorId], references: [id])
 
-  @@map("reviews")
+  @@map("course_comments")
 }
 
 model Account {
@@ -73,15 +71,15 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime? @map("email_verified")
-  image         String?
-  accounts      Account[]
-  sessions      Session[]
-  reviews       Review[]
-  courses       Course[]
+  id             String          @id @default(cuid())
+  name           String?
+  email          String?         @unique
+  emailVerified  DateTime?       @map("email_verified")
+  image          String?
+  accounts       Account[]
+  sessions       Session[]
+  courseComments CourseComment[]
+  courses        Course[]
 
   @@map("users")
 }

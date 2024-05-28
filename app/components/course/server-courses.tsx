@@ -1,9 +1,6 @@
-import {RFeature, RFeatureUIEvent, RLayerVector} from "rlayers";
-import dayjs from "dayjs";
-import {RStroke, RStyle, RStyleArray, useRStyle} from "rlayers/style";
+import {RFeature, RLayerVector} from "rlayers";
 import {useCallback} from "react";
-import {Feature} from "ol";
-import {Geometry, LineString} from "ol/geom";
+import {LineString} from "ol/geom";
 
 export default function ServerCourses(props: any) {
     const { towns, current, setCurrent, prevCourse, serverCourses, isDrawState } = props;
