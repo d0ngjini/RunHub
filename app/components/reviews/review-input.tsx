@@ -1,6 +1,7 @@
 import {Button, Image, Textarea} from "@nextui-org/react";
 import {useEffect, useState} from "react";
 import {signIn, useSession} from "next-auth/react";
+import {RiLoginBoxLine} from "react-icons/ri";
 
 export default function ReviewInput(props: any) {
     const { getSingleCourse } = props;
@@ -31,25 +32,28 @@ export default function ReviewInput(props: any) {
     }
 
     let session = useSession();
-    console.log('client session', session);
+
+    console.log('session', session);
 
     if (session.status === 'unauthenticated') {
         return <>
             <div className="w-full flex gap-2 items-center" onSubmit={onSignHandler}>
-                <Textarea
-                    variant="bordered"
-                    maxRows={2}
-                    label="1"
-                    placeholder="리뷰를 남기기 위해 로그인이 필요합니다."
-                    value={reviewVal}
-                    onValueChange={setReviewVal}
-                    isRequired={true}
-                />
-                <Button color="primary" type={"button"} variant={"faded"} isIconOnly  onClick={(e: any) => {
-                    signIn();
-                }} >
-                    <Image width={"14"} src="https://www.svgrepo.com/show/509153/login.svg"/>
-                </Button>
+                {/*<Textarea*/}
+                {/*    variant="bordered"*/}
+                {/*    maxRows={2}*/}
+                {/*    placeholder="로그인이 필요합니다"*/}
+                {/*    value={reviewVal}*/}
+                {/*    onValueChange={setReviewVal}*/}
+                {/*    isRequired={true}*/}
+                {/*/>*/}
+                <a href="#" className="flex gap-2 items-center text-sm font-bold underline underline-offset-4" onClick={() => {
+                    signIn()
+                }}><RiLoginBoxLine />리뷰를 남기려면 로그인이 필요합니다.</a>
+                {/*<Button color="primary" className="text-lg" type={"button"} variant={"faded"} isIconOnly  onClick={(e: any) => {*/}
+                {/*    signIn();*/}
+                {/*}} >*/}
+                {/*    */}
+                {/*</Button>*/}
             </div>
         </>
     }
@@ -65,7 +69,7 @@ export default function ReviewInput(props: any) {
                 isRequired={true}
                 // errorMessage="리뷰가 입력되지 않았어요!"
             />
-            <Button color="primary" type={"submit"} variant={"faded"} isIconOnly>
+            <Button className="absolute right-6" color="primary" type={"submit"} variant={"faded"} isIconOnly>
                 <Image width={"24"} src="https://www.svgrepo.com/show/532154/check.svg"/>
             </Button>
         </form>

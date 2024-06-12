@@ -87,7 +87,7 @@ export default function Map() {
         })
         .then(res => res.json())
         .then(data => {
-            data.content.createdAt = dayjs(data.createdAt).format('YYYY-MM-DD HH:mm:ss')
+            data.content.createdAt = dayjs(data.content.createdAt).format('YYYY-MM-DD HH:mm:ss')
             setCardData(data.content);
             setCardHidden(true);
         });

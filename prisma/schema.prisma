@@ -40,6 +40,16 @@ model CourseComment {
   @@map("course_comments")
 }
 
+model CourseLike {
+  id        String   @id @default(cuid())
+  courseId  String   @map("course_id")
+  userId    String   @map("user_id")
+  isLike    Boolean  @map("is_like")
+  updatedAt DateTime @default(now()) @map("updated_at")
+
+  @@map("course_like")
+}
+
 model Account {
   id                String  @id @default(cuid())
   userId            String  @map("user_id")
