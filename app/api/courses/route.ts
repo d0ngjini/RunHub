@@ -10,8 +10,7 @@ export async function GET() {
     });
 
     courses.forEach((c: any) => {
-        const convertedDate = dayjs(c.createdAt).format('YYYY-MM-DD HH:mm:ss');
-        c.convertedDate = convertedDate;
+        c.convertedDate = dayjs(c.createdAt).format('YYYY-MM-DD HH:mm:ss');
     });
 
     return Response.json({
@@ -22,8 +21,6 @@ export async function GET() {
 
 export async function POST(request: Request) {
     const session = await auth();
-
-    console.log('session', session);
 
     if (session === null) {
         return Response.json({

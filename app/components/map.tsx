@@ -69,7 +69,6 @@ export default function Map() {
                     courses.push(course)
                 });
 
-                console.log('조회된 코스', courses);
                 setServerCourses(courses);
             });
     }
@@ -81,8 +80,8 @@ export default function Map() {
     const towns = useRStyle();
     const currentStyles = useRStyle();
 
-    const getSingleCourse = (id: string) => {
-        fetch('/api/courses/' + id, {
+    const getSingleCourse = async (id: string) => {
+        await fetch('/api/courses/' + id, {
             method: 'GET',
         })
         .then(res => res.json())
@@ -96,14 +95,13 @@ export default function Map() {
     return (
         <>
             <SignInButton setDrawState={setDrawState} drawState={isDrawState} />
-            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse}/>
+            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse}/>
             <CourseStyle towns={towns} currentStyles={currentStyles}/>
 
             <RMap className='example-map w-screen h-screen'
                   initial={{center: fromLonLat([126.734086, 37.715133]), zoom: 12}}>
                 <ROSM/>
-                <CourseEvent current={current} currentStyles={currentStyles} setCardData={setCardData}
-                             setCardHidden={setCardHidden} getSingleCourse={getSingleCourse}/>
+                <CourseEvent current={current} currentStyles={currentStyles} getSingleCourse={getSingleCourse}/>
                 <ServerCourses
                     towns={towns}
                     current={current}

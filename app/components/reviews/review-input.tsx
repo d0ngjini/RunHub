@@ -33,8 +33,6 @@ export default function ReviewInput(props: any) {
 
     let session = useSession();
 
-    console.log('session', session);
-
     if (session.status === 'unauthenticated') {
         return <>
             <div className="w-full flex gap-2 items-center" onSubmit={onSignHandler}>

@@ -2,7 +2,7 @@ import {RFeature, RFeatureUIEvent, RLayerVector} from "rlayers";
 import dayjs from "dayjs";
 
 export default function CourseEvent(props: any) {
-    const { current, currentStyles, setCardData, setCardHidden, getSingleCourse } = props;
+    const { current, currentStyles, getSingleCourse } = props;
 
     return (
         <>

@@ -3,7 +3,6 @@ import Avatar from "boring-avatars";
 import dayjs from "dayjs";
 
 export default function ReviewList(props: any) {
-    console.log('props:', props)
     if (props.hasOwnProperty('data') && props.data.length > 0) {
         return (
             <div className="max-h-52 w-full overflow-auto scrollbar-hide flex flex-col gap-2">

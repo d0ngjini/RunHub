@@ -38,6 +38,20 @@ export async function GET(request: NextRequest, { params }: {
         });
     }
 
+    console.log('searched course', course);
+
+    const likeResult = await prisma.courseLike.aggregate({
+        _count: {
+            isLike: true,
+        },
+        where: {
+            courseId: course.id,
+            isLike: true,
+        }
+    })
+
+    const likeCount = likeResult._count.isLike
+
     const session = await auth();
 
     if (session !== null) {
@@ -54,6 +68,7 @@ export async function GET(request: NextRequest, { params }: {
                 content: {
                     ...course,
                     isLiked: false,
+                    likeCount: likeCount,
                 }
             });
         } else {
@@ -62,6 +77,7 @@ export async function GET(request: NextRequest, { params }: {
                 content: {
                     ...course,
                     isLiked: true,
+                    likeCount: likeCount,
                 }
             });
         }
@@ -73,6 +89,7 @@ export async function GET(request: NextRequest, { params }: {
         content: {
             ...course,
             isLiked: false,
+            likeCount: likeCount,
         },
     });
 }
