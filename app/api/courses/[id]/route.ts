@@ -62,13 +62,14 @@ export async function GET(request: NextRequest, { params }: {
             },
         });
 
+        console.log('userLiked', userLiked);
+
         if (userLiked.length === 0) {
             return Response.json({
                 status: 200,
                 content: {
                     ...course,
                     isLiked: false,
-                    likeCount: likeCount,
                 }
             });
         } else {
@@ -76,8 +77,7 @@ export async function GET(request: NextRequest, { params }: {
                 status: 200,
                 content: {
                     ...course,
-                    isLiked: true,
-                    likeCount: likeCount,
+                    isLiked: userLiked[0].isLike,
                 }
             });
         }
@@ -89,7 +89,6 @@ export async function GET(request: NextRequest, { params }: {
         content: {
             ...course,
             isLiked: false,
-            likeCount: likeCount,
         },
     });
 }

@@ -5,7 +5,10 @@ import React from "react";
 import {SessionProvider} from "next-auth/react"
 
 const inter = Inter({ subsets: ["latin"] });
-const NotoSansKR = Noto_Sans_KR({ subsets: ["latin"] });
+const NotoSansKR = Noto_Sans_KR({
+    subsets: ["latin"],
+    weight: ["100", "400", "700", "900"],
+});
 
 export const metadata: Metadata = {
   title: "RunHub",

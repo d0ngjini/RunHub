@@ -8,9 +8,8 @@ import {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 
 export default function CourseCard(props: any) {
-    const {isCardHidden, cardData, setCardData, getSingleCourse, setCardHidden} = props;
-    const [isCourseLiked, setIsCourseLiked] = useState(false);
-    const [likeCount, setLikeCount] = useState(0);
+    const {isCardHidden, cardData, setCardData, setCardHidden} = props;
+    const [likeCount, setLikeCount] = useState(-1);
 
     const getCourseLikes = async () => {
         return await fetch(`/api/courses/${cardData.id}/like`, {
@@ -18,16 +17,17 @@ export default function CourseCard(props: any) {
         })
     }
 
-    useEffect(() => {
-        getCourseLikes()
+    getCourseLikes()
         .then(res => res.json())
         .then(res => {
-            console.log('res', res);
+            console.log()
             setLikeCount(res.data.count._count.isLike)
         })
-    }, [cardData, getCourseLikes])
 
     let session: any = useSession();
+
+    console.log('course opened', cardData);
+    console.log('likeCount', likeCount);
 
     const addCourseLike = async () => {
         await fetch(`/api/courses/${cardData.id}/like`, {
@@ -35,19 +35,18 @@ export default function CourseCard(props: any) {
             body: JSON.stringify({
                 courseId: cardData.id,
                 userId: session.data.userId,
-                isLiked: !isCourseLiked,
-            })
+                isLiked: !cardData.isLiked,
+            }),
         }).then(res => {
             return res.json()
         }).then(data => {
             if (data.status !== 200) {
                 alert('로그인이 필요합니다.');
             } else {
-                setIsCourseLiked(!isCourseLiked);
                 setCardData({
                     ...cardData,
-                    isLiked: !cardData.isLiked
-                })
+                    isLiked: !cardData.isLiked,
+                });
             }
         });
     }
@@ -70,7 +69,7 @@ export default function CourseCard(props: any) {
                                 <p className="text-tiny uppercase font-bold">{cardData.description}</p>
                             </div>
                             {
-                                isCourseLiked
+                                cardData.isLiked
                                     ?
                                     <Button size="sm" variant="bordered" color="success" className="small" title="좋아요" onClick={() => {
                                         addCourseLike()
@@ -90,7 +89,7 @@ export default function CourseCard(props: any) {
                     <div className="px-3 pt-3 text-sm font-semibold">리뷰 <span className="text-xs text-gray-500">({cardData.courseComments.length})</span></div>
                     <CardBody className="items-center flex-col gap-3">
                         <ReviewList data={cardData.courseComments}/>
-                        <ReviewInput courseId={cardData.id} getSingleCourse={getSingleCourse}/>
+                        <ReviewInput courseId={cardData.id}/>
                     </CardBody>
                 </Card> 
             }

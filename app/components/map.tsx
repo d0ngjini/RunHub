@@ -87,21 +87,31 @@ export default function Map() {
         .then(res => res.json())
         .then(data => {
             data.content.createdAt = dayjs(data.content.createdAt).format('YYYY-MM-DD HH:mm:ss')
+            console.log('content', data.content)
             setCardData(data.content);
             setCardHidden(true);
         });
+    }
+
+    const featureConfig = {
+        baseStrokeColor: '#f2f2f2',
+        hlStrokeColor: '#f96d00',
+        defBaseStrokeWidth: 8,
+        defHLStrokeWidth: 3,
+        newBaseStrokeWidth: 12,
+        newHLStrokeWidth: 8,
     }
 
     return (
         <>
             <SignInButton setDrawState={setDrawState} drawState={isDrawState} />
             <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse}/>
-            <CourseStyle towns={towns} currentStyles={currentStyles}/>
+            <CourseStyle towns={towns} currentStyles={currentStyles} config={featureConfig}/>
 
             <RMap className='example-map w-screen h-screen'
                   initial={{center: fromLonLat([126.734086, 37.715133]), zoom: 12}}>
                 <ROSM/>
-                <CourseEvent current={current} currentStyles={currentStyles} getSingleCourse={getSingleCourse}/>
+                {/*<CourseEvent config={featureConfig} getSingleCourse={getSingleCourse}/>*/}
                 <ServerCourses
                     towns={towns}
                     current={current}
@@ -109,6 +119,8 @@ export default function Map() {
                     prevCourse={prevCourse}
                     serverCourses={serverCourses}
                     isDrawState={isDrawState}
+                    config={featureConfig}
+                    getSingleCourse={getSingleCourse}
                 />
 
                 {

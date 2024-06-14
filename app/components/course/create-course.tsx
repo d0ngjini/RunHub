@@ -31,7 +31,7 @@ export default function CreateCourse(props: any) {
         entries.flatCoordinates = JSON.stringify(drawnCourse.flatCoordinates)
 
         if (confirm('코스를 저장하시겠습니까?')) {
-            await fetch('/api/createCourse', {
+            await fetch('/api/courses', {
                 method: 'POST',
                 body: JSON.stringify(entries)
             })

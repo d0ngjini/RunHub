@@ -15,7 +15,7 @@ export async function GET(request: Request,  { params } : {
         where: {
             courseId: params.id,
             isLike: true,
-        }
+        },
     });
 
     return Response.json({
@@ -47,8 +47,6 @@ export async function POST(request: Request) {
     });
 
     const isoString = new Date().toISOString();
-
-    console.log('isoString', isoString)
 
     if (!liked) {
         await prisma.courseLike.create({
