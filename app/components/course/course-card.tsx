@@ -8,7 +8,7 @@ import {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 
 export default function CourseCard(props: any) {
-    const {isCardHidden, cardData, setCardData, setCardHidden} = props;
+    const {isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse} = props;
     const [likeCount, setLikeCount] = useState(-1);
 
     const getCourseLikes = async () => {
@@ -89,7 +89,7 @@ export default function CourseCard(props: any) {
                     <div className="px-3 pt-3 text-sm font-semibold">리뷰 <span className="text-xs text-gray-500">({cardData.courseComments.length})</span></div>
                     <CardBody className="items-center flex-col gap-3">
                         <ReviewList data={cardData.courseComments}/>
-                        <ReviewInput courseId={cardData.id}/>
+                        <ReviewInput courseId={cardData.id} getSingleCourse={ getSingleCourse } />
                     </CardBody>
                 </Card> 
             }

@@ -3,6 +3,7 @@ import {Inter, Noto_Sans_KR} from "next/font/google";
 import "./globals.css";
 import React from "react";
 import {SessionProvider} from "next-auth/react"
+import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 const NotoSansKR = Noto_Sans_KR({
@@ -23,7 +24,11 @@ export default function RootLayout({
   return (
       <SessionProvider>
           <html lang="en">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            <Head>
+                <meta
+                    name="viewport"
+                    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+            </Head>
             <body className={NotoSansKR.className}>{children}</body>
           </html>
       </SessionProvider>

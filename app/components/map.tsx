@@ -1,8 +1,8 @@
-import {RInteraction, RLayerVector, RMap, ROSM} from "rlayers";
+import {MapBrowserEvent, RInteraction, RLayerVector, RMap, ROSM} from "rlayers";
 import {fromLonLat} from "ol/proj";
 import {Geometry} from "ol/geom";
 import {useEffect, useState} from "react";
-import {never, shiftKeyOnly, singleClick, touchOnly} from "ol/events/condition";
+import {mouseOnly, never, shiftKeyOnly, singleClick, touchOnly} from "ol/events/condition";
 
 import {Button, useDisclosure} from "@nextui-org/react";
 
@@ -129,10 +129,12 @@ export default function Map() {
                     <RLayerVector zIndex={0}>
                         <RInteraction.RDraw
                             type={"LineString"}
-                            condition={touchOnly}
+                            condition={(e: MapBrowserEvent<any>) => {
+                                console.log('e', e)
+                                return e.type === 'pointerdown' || e.type === 'touchdown'
+                            }}
                             freehandCondition={never}
                             onDrawEnd={(e: any) => {
-                                // @ts-ignore
                                 setDrawnCourse({
                                     ...drawnCourse,
                                     flatCoordinates: e.feature.getGeometry().getCoordinates(),
