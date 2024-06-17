@@ -1,7 +1,7 @@
 import {Card, CardBody, CardHeader} from "@nextui-org/card";
 import ReviewList from "@/app/components/reviews/review-list";
 import ReviewInput from "@/app/components/reviews/review-input";
-import {Button, Divider} from "@nextui-org/react";
+import {Button, card, Divider} from "@nextui-org/react";
 import Image from 'next/image';
 import {RiCheckLine, RiCloseFill, RiCloseLine, RiHeart3Line, RiThumbUpLine} from "react-icons/ri";
 import {useEffect, useState} from "react";
@@ -15,19 +15,21 @@ export default function CourseCard(props: any) {
         return await fetch(`/api/courses/${cardData.id}/like`, {
             method: 'GET',
         })
-    }
+    };
 
-    getCourseLikes()
-        .then(res => res.json())
-        .then(res => {
-            console.log()
-            setLikeCount(res.data.count._count.isLike)
-        })
+    useEffect(() => {
+        if (!cardData.id) {
+            return;
+        }
+
+        getCourseLikes()
+            .then(res => res.json())
+            .then(res => {
+                setLikeCount(res.data.count._count.isLike)
+            });
+    }, [likeCount, cardData]);
 
     let session: any = useSession();
-
-    // console.log('course opened', cardData);
-    // console.log('likeCount', likeCount);
 
     const addCourseLike = async () => {
         await fetch(`/api/courses/${cardData.id}/like`, {
