@@ -58,7 +58,7 @@ export function SignInButton(props: any) {
                                     key={item.key}
                                     color={item.key === "delete" ? "danger" : "default"}
                                     className={item.key === "delete" ? "text-danger" : "" + " flex flex-row"}
-                                    onClick={item.onClick}
+                                    onPress={item.onClick}
                                 >
                                     <div className="flex gap-2 items-center">
                                         {item.icon}
