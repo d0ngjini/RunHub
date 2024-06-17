@@ -26,8 +26,8 @@ export default function CourseCard(props: any) {
 
     let session: any = useSession();
 
-    console.log('course opened', cardData);
-    console.log('likeCount', likeCount);
+    // console.log('course opened', cardData);
+    // console.log('likeCount', likeCount);
 
     const addCourseLike = async () => {
         await fetch(`/api/courses/${cardData.id}/like`, {

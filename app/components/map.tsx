@@ -2,7 +2,7 @@ import {RInteraction, RLayerVector, RMap, ROSM} from "rlayers";
 import {fromLonLat} from "ol/proj";
 import {Geometry} from "ol/geom";
 import {useEffect, useState} from "react";
-import {never} from "ol/events/condition";
+import {never, shiftKeyOnly, singleClick, touchOnly} from "ol/events/condition";
 
 import {Button, useDisclosure} from "@nextui-org/react";
 
@@ -16,6 +16,8 @@ import CourseEvent from "@/app/components/course/course-event";
 import {Course} from "@prisma/client";
 import ServerCourses from "@/app/components/course/server-courses";
 import dayjs from "dayjs";
+import {Simulate} from "react-dom/test-utils";
+import pointerDown = Simulate.pointerDown;
 
 export default function Map() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -87,7 +89,6 @@ export default function Map() {
         .then(res => res.json())
         .then(data => {
             data.content.createdAt = dayjs(data.content.createdAt).format('YYYY-MM-DD HH:mm:ss')
-            console.log('content', data.content)
             setCardData(data.content);
             setCardHidden(true);
         });
@@ -128,9 +129,7 @@ export default function Map() {
                     <RLayerVector zIndex={0}>
                         <RInteraction.RDraw
                             type={"LineString"}
-                            condition={e => {
-                                return e.type === 'pointerdown';
-                            }}
+                            condition={touchOnly}
                             freehandCondition={never}
                             onDrawEnd={(e: any) => {
                                 // @ts-ignore
