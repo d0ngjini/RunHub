@@ -1,4 +1,4 @@
-import type {Metadata} from "next";
+import type {Metadata, Viewport} from "next";
 import {Inter, Noto_Sans_KR} from "next/font/google";
 import "./globals.css";
 import React from "react";
@@ -16,6 +16,15 @@ export const metadata: Metadata = {
   description: "런허브",
 };
 
+export const viewport: Viewport = {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    // Also supported by less commonly used
+    // interactiveWidget: 'resizes-visual',
+}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -24,11 +33,6 @@ export default function RootLayout({
   return (
       <SessionProvider>
           <html lang="en">
-            <Head>
-                <meta
-                    name="viewport"
-                    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-            </Head>
             <body className={NotoSansKR.className}>{children}</body>
           </html>
       </SessionProvider>
