@@ -92,10 +92,10 @@ export default function CourseCard(props: any) {
         <>
             {
                 isCardHidden &&
-                <Card className="absolute z-40 w-96 py-1 bottom-0 mb-4 right-1/2 translate-x-1/2">
+                <Card className="absolute z-40 w-full md:w-96 py-1 bottom-0 mb-0 md:mb-4 rounded-none md:rounded-xl right-1/2 translate-x-1/2">
                     {
                         session && session.user?.id === cardData.userId &&
-                        <Button size="sm" color="danger" className="absolute z-20 right-10 top-1 rounded-2xl" onClick={() => {
+                        <Button size="sm" color="danger" className="absolute z-20 right-10 top-1 rounded-2xl opacity-60" onClick={() => {
                             void deleteCourse();
                         }} isIconOnly>
                             <RiDeleteBin4Line size={16} />
