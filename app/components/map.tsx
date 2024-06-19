@@ -95,18 +95,20 @@ export default function Map() {
     }
 
     const featureConfig = {
-        baseStrokeColor: '#f2f2f2',
-        hlStrokeColor: '#f96d00',
-        defBaseStrokeWidth: 8,
+        baseStrokeColor: 'rgba(255,255,255,0.5)',
+        mainStrokeColor: 'rgba(255,108,0,0.7)',
+        defBaseStrokeWidth: 7,
         defHLStrokeWidth: 3,
         newBaseStrokeWidth: 12,
         newHLStrokeWidth: 8,
+        myStrokeColor: 'rgba(0,212,255,0.7)',
+        myHlStrokeColor: 'rgba(0,212,255,0.7)'
     }
 
     return (
         <>
             <SignInButton setDrawState={setDrawState} drawState={isDrawState} />
-            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse}/>
+            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse} getCourses={getCourses}/>
             <CourseStyle towns={towns} currentStyles={currentStyles} config={featureConfig}/>
 
             <RMap className='example-map w-screen h-screen'

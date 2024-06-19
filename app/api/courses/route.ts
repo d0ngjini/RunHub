@@ -22,7 +22,7 @@ export async function GET() {
 export async function POST(request: Request) {
     const session = await auth();
 
-    if (session === null) {
+    if (session === null || !session.user?.id) {
         return Response.json({
             status: 401,
             message: "Authentication failed.",
@@ -31,6 +31,8 @@ export async function POST(request: Request) {
 
     const param = await request.json();
     param.createdAt = new Date().toISOString();
+    param.userId = session.user.id;
+
     const created = await prisma.course.create({
         data: param,
     });

@@ -3,7 +3,6 @@ import {Inter, Noto_Sans_KR} from "next/font/google";
 import "./globals.css";
 import React from "react";
 import {SessionProvider} from "next-auth/react"
-import Head from "next/head";
 
 const inter = Inter({ subsets: ["latin"] });
 const NotoSansKR = Noto_Sans_KR({

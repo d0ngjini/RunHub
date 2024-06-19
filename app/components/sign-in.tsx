@@ -5,12 +5,36 @@ import {Button, DropdownItem, DropdownMenu, Image} from "@nextui-org/react";
 import Avatar from 'boring-avatars';
 import {Dropdown, DropdownTrigger} from "@nextui-org/dropdown";
 import {RiArrowDropDownFill, RiLogoutBoxLine, RiMarkPenLine} from "react-icons/ri";
+import {useEffect, useState} from "react";
+import dayjs from "dayjs";
+import {cursor} from "sisteransi";
+import left = cursor.left;
 
 export function SignInButton(props: any) {
     const { data: session } = useSession();
     const { setDrawState, isDrawState } = props;
+    const [ expire, setExpire ] = useState<number>(-1);
+
+    useEffect(() => {
+        if (!session) {
+            return
+        }
+
+        const leftTime = dayjs(session.expires).unix() - dayjs().unix();
+        setExpire(leftTime);
+
+        setInterval(() => {
+            setExpire((time) => {
+                return time - 1
+            });
+        }, 1000)
+    }, []);
 
     const items = [
+        {
+            key: 'time',
+            label: `접속유지시간 : ${Math.floor(expire / 60)}분 ${expire % 60}초`,
+        },
         {
             key: "new",
             label: "러닝코스 추가",
@@ -52,12 +76,12 @@ export function SignInButton(props: any) {
                                 <RiArrowDropDownFill />
                             </Button>
                         </DropdownTrigger>
-                        <DropdownMenu aria-label="Dynamic Actions" items={items}>
+                        <DropdownMenu aria-label="Dynamic Actions" items={ items } disabledKeys={ ["time"] }>
                             {(item) => (
                                 <DropdownItem
                                     key={item.key}
                                     color={item.key === "delete" ? "danger" : "default"}
-                                    className={item.key === "delete" ? "text-danger" : "" + " flex flex-row"}
+                                    className={item.key === "delete" ? "text-danger" : "" + " flex flex-row select-none"}
                                     onPress={item.onClick}
                                 >
                                     <div className="flex gap-2 items-center">

@@ -92,3 +92,37 @@ export async function GET(request: NextRequest, { params }: {
         },
     });
 }
+
+export async function DELETE(request: NextRequest, { params }: {
+    params: {
+        id: string
+    }
+}) {
+    const session = await auth();
+
+    if (session === null || !session.user?.id) {
+        return Response.json({
+            status: 401,
+            message: 'unauthenticated user'
+        })
+    }
+
+    const result = await prisma.course.delete({
+        where: {
+            userId: session.user?.id,
+            id: params.id,
+        }
+    });
+
+    if (result?.id) {
+        return Response.json({
+            status: 200,
+            message: 'successfully deleted',
+        });
+    } else {
+        return Response.json({
+            status: 404,
+            message: 'not found data',
+        });
+    }
+}

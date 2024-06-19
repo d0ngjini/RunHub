@@ -3,12 +3,13 @@ import ReviewList from "@/app/components/reviews/review-list";
 import ReviewInput from "@/app/components/reviews/review-input";
 import {Button, card, Divider} from "@nextui-org/react";
 import Image from 'next/image';
-import {RiCheckLine, RiCloseFill, RiCloseLine, RiHeart3Line, RiThumbUpLine} from "react-icons/ri";
+import {RiCheckLine, RiCloseFill, RiCloseLine, RiDeleteBin4Line, RiHeart3Line, RiThumbUpLine} from "react-icons/ri";
 import {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 
 export default function CourseCard(props: any) {
-    const {isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse} = props;
+    const { data: session } = useSession();
+    const {isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse, getCourses } = props;
     const [likeCount, setLikeCount] = useState(-1);
 
     const getCourseLikes = async () => {
@@ -29,21 +30,24 @@ export default function CourseCard(props: any) {
             });
     }, [likeCount, cardData]);
 
-    let session: any = useSession();
-
     const addCourseLike = async () => {
+        if (!session) {
+            alert('리뷰를 추천하기 위해서는 로그인이 필요합니다.');
+            return;
+        }
+
         await fetch(`/api/courses/${cardData.id}/like`, {
             method: 'POST',
             body: JSON.stringify({
                 courseId: cardData.id,
-                userId: session.data.userId,
+                userId: session.user?.id,
                 isLiked: !cardData.isLiked,
             }),
         }).then(res => {
             return res.json()
         }).then(data => {
             if (data.status !== 200) {
-                alert('로그인이 필요합니다.');
+                alert('처리 중 오류가 발생했습니다.');
             } else {
                 setCardData({
                     ...cardData,
@@ -52,16 +56,56 @@ export default function CourseCard(props: any) {
             }
         });
     }
+
+    const deleteCourse = async () => {
+        if (!confirm('내가 등록한 코스를 삭제하시겠습니까?')) {
+            return;
+        }
+
+        if (!session) {
+            alert('잘못된 요청입니다.');
+            return;
+        }
+
+        await fetch(`/api/courses/${cardData.id}`, {
+            method: 'DELETE',
+            body: JSON.stringify({
+                courseId: cardData.id,
+            })
+        })
+        .then((res: any) => res.json())
+        .then((data: any) => {
+            if (data && data.status === 200) {
+                alert('코스가 정상적으로 삭제되었습니다.');
+                getCourses();
+                setCardHidden(false);
+            } else {
+                alert('데이터 처리 중 오류가 발생했습니다.');
+            }
+        })
+
+    }
+
+    console.log('user session', session);
     
     return (
         <>
             {
                 isCardHidden &&
                 <Card className="absolute z-40 w-96 py-1 bottom-0 mb-4 right-1/2 translate-x-1/2">
+                    {
+                        session && session.user?.id === cardData.userId &&
+                        <Button size="sm" color="danger" className="absolute z-20 right-10 top-1 rounded-2xl" onClick={() => {
+                            void deleteCourse();
+                        }} isIconOnly>
+                            <RiDeleteBin4Line size={16} />
+                        </Button>
+                    }
+
                     <Button size="sm" className="absolute z-20 right-1 top-1 rounded-2xl bg-gray-50" onClick={() => {
                         setCardHidden(!isCardHidden)
                     }} isIconOnly>
-                        <RiCloseLine className="text-lg" />
+                        <RiCloseLine size={16} />
                     </Button>
                     <CardHeader className="flex-col items-start">
                         <small className="text-default-500">{cardData.createdAt}</small>
@@ -74,13 +118,13 @@ export default function CourseCard(props: any) {
                                 cardData.isLiked
                                     ?
                                     <Button size="sm" variant="bordered" color="success" className="small" title="좋아요" onClick={() => {
-                                        addCourseLike()
+                                        void addCourseLike()
                                     }}>
                                         <RiCheckLine />추천 {likeCount}
                                     </Button>
                                     :
                                     <Button size="sm" variant="bordered" color="primary" className="small" title="좋아요" onClick={ () => {
-                                        addCourseLike()
+                                        void addCourseLike()
                                     }}>
                                         <RiThumbUpLine />추천 {likeCount}
                                     </Button>
