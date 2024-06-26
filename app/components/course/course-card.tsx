@@ -120,7 +120,7 @@ export default function CourseCard(props: any) {
                                     <Button size="sm" variant="bordered" color="success" className="small" title="좋아요" onClick={() => {
                                         void addCourseLike()
                                     }}>
-                                        <RiCheckLine />추천 {likeCount}
+                                        <RiCheckLine />추천됨 {likeCount}
                                     </Button>
                                     :
                                     <Button size="sm" variant="bordered" color="primary" className="small" title="좋아요" onClick={ () => {
