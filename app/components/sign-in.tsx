@@ -110,7 +110,7 @@ export function SignInButton(props: any) {
                     colors={['#fcfcfc', '#ff5400', '#6c6c6c', '#7cff00', '#DF8615']}
                 />
                 <span className={"font-semibold"}>
-                    로그인 정보가 없습니다.
+                    로그인
                 </span>
             </Button>
         </>

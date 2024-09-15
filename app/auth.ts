@@ -8,7 +8,7 @@ import {JWT} from "@auth/core/jwt";
 
 export const {handlers, signIn, signOut, auth} = NextAuth({
     adapter: PrismaAdapter(prisma),
-    providers: [Kakao, Naver],
+    providers: [Kakao],
     session: {
         maxAge: 900,
         updateAge: 300,
