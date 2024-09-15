@@ -45,7 +45,7 @@ $ mkdir .env.local
 
 ### Edit Environment
 ``` bash
-./env 
+./.env 
 DATABASE_URL="postgresql://postgres:*insertuserpasswd*!@localhost:5432/postgres?schema=public" # Connect your existing database
 ```
 ``` bash
@@ -55,7 +55,7 @@ $ npx prisma db push
 $ npx auth secret # Create your AUTH_SECRET
 ```
 ```bash
-./env.local
+./.env.local
 AUTH_SECRET=                # auth.js cli
 AUTH_KAKAO_ID=              # 카카오 발급
 AUTH_KAKAO_SECRET=          # 카카오 발급
