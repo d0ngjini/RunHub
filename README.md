@@ -23,6 +23,41 @@ RunHub와 함께라면 매일매일의 러닝이 더욱 즐겁고 의미 있는 
 ![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)        
 
 ### Development
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=Javascript&logoColor=white)
+- Frontend<br>
+![typescript](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white)
+![NextUI](https://img.shields.io/badge/nextui-000000?style=for-the-badge&logo=nextui&logoColor=white)<br>
+- Backend<br>
+![prisma](https://img.shields.io/badge/prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
+![postgresql](https://img.shields.io/badge/postgresql-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Auth.js](https://img.shields.io/badge/Auth.js-6614D9?style=for-the-badge&logo=Next.js&logoColor=white)
+
+## Hosting Yourself
+### Installation
+``` bash
+$ git clone https://github.com/thisisdj/RunHub.git
+$ cd RunHub
+$ npm install
+$ mkdir .env
+$ mkdir .env.local
+```
+
+### Edit Environment
+``` bash
+./env 
+DATABASE_URL="postgresql://postgres:*insertuserpasswd*!@localhost:5432/postgres?schema=public" # Connect your existing database
+```
+``` bash
+$ npx prisma db push
+```
+```bash
+$ npx auth secret # Create your AUTH_SECRET
+```
+```bash
+./env.local
+AUTH_SECRET=                # auth.js cli
+AUTH_KAKAO_ID=              # 카카오 발급
+AUTH_KAKAO_SECRET=          # 카카오 발급
+```
+
