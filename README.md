@@ -15,12 +15,12 @@ RunHub와 함께라면 매일매일의 러닝이 더욱 즐겁고 의미 있는 
 
 ## Todo
 ### 공통
-- [ ] 알림창 문구 및 라이브러리 적용
+- [x] 알림창 문구 및 라이브러리 적용
 - [ ] 데이터페칭 `SWR` 도입
 ### 지도
-- [ ] `Vworld WMTS` 적용
+- [x] `Vworld WMTS` 적용
 - [ ] 지도 회전 방지
-- [ ] 내 위치 이동 기능
+- [x] 내 위치 이동 기능
 ### 코스 상세정보 및 리뷰
 - [ ] 코스 등록자 표기
 - [ ] 리뷰 추천 / 비추천
@@ -41,8 +41,9 @@ RunHub와 함께라면 매일매일의 러닝이 더욱 즐겁고 의미 있는 
 
 ### Development
 - Frontend<br>
+![OpenLayers](https://img.shields.io/badge/Openlayers-1F6B75?style=for-the-badge&logo=Openlayers&logoColor=white)
+![Rlayers](https://img.shields.io/badge/Rlayers-1F6B75?style=for-the-badge&logo=Openlayers&logoColor=white)
 ![typescript](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white)
 ![NextUI](https://img.shields.io/badge/nextui-000000?style=for-the-badge&logo=nextui&logoColor=white)<br>
 - Backend<br>
