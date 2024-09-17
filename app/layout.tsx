@@ -35,10 +35,12 @@ export default function RootLayout({
 }>) {
     return (
 
-        <SessionProvider>
             <html lang="en">
-            <body className={NotoSansKR.className}>{children}</body>
+                <body className={NotoSansKR.className}>
+                    <SessionProvider>
+                        {children}
+                    </SessionProvider>
+                </body>
             </html>
-        </SessionProvider>
     );
 }

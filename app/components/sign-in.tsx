@@ -5,35 +5,49 @@ import {Button, DropdownItem, DropdownMenu, Image} from "@nextui-org/react";
 import Avatar from 'boring-avatars';
 import {Dropdown, DropdownTrigger} from "@nextui-org/dropdown";
 import {RiArrowDropDownFill, RiLogoutBoxLine, RiMarkPenLine} from "react-icons/ri";
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import dayjs from "dayjs";
-import {cursor} from "sisteransi";
-import left = cursor.left;
 
 export function SignInButton(props: any) {
     const { data: session } = useSession();
     const { setDrawState, isDrawState } = props;
-    const [ expire, setExpire ] = useState<number>(-1);
+    const [timeLeft, setTimeLeft] = useState<number>();
+
+    // 세션 만료 시간을 계산하여 남은 시간을 업데이트하는 함수
+    const calculateTimeLeft = useCallback(() => {
+        if (session?.expires) {
+            const expirationTime = dayjs(session.expires);
+            const currentTime = dayjs();
+            const tl = expirationTime.diff(currentTime); // 밀리초로 남은 시간 계산
+            setTimeLeft(tl);
+        }
+    }, [session]);
 
     useEffect(() => {
-        if (!session) {
-            return
-        }
+        calculateTimeLeft(); // 초기 계산
 
-        const leftTime = dayjs(session.expires).unix() - dayjs().unix();
-        setExpire(leftTime);
+        // 1초마다 남은 시간을 업데이트
+        const intervalId = setInterval(() => {
+            calculateTimeLeft();
+        }, 1000);
 
-        setInterval(() => {
-            setExpire((time) => {
-                return time - 1
-            });
-        }, 1000)
-    }, []);
+        // 컴포넌트가 언마운트될 때 setInterval 정리
+        return () => clearInterval(intervalId);
+    }, [session, calculateTimeLeft]);
+
+    // 남은 시간을 'mm:ss' 형식으로 변환하는 함수
+    const formatTime = (timeInMilliseconds: number) => {
+        const duration = dayjs.duration(timeInMilliseconds);
+        const minutes = duration.minutes();
+        const seconds = duration.seconds();
+        return `${minutes.toString().padStart(2, '0')}분 ${seconds.toString().padStart(2, '0')}초`;
+    };
 
     const items = [
         {
             key: 'time',
-            label: `접속유지시간 : ${Math.floor(expire / 60)}분 ${expire % 60}초`,
+            label: `접속유지시간 : ${formatTime(timeLeft)}`,
+
         },
         {
             key: "new",

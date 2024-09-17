@@ -4,6 +4,7 @@ import {fromLonLat} from "ol/proj";
 import {LineString, Point} from "ol/geom";
 import {RStroke, RStyle, RText} from "rlayers/style";
 import {useState} from "react";
+import toast from "react-hot-toast";
 
 export default function CreateCourse(props: any) {
     const [isSetDefaultLocation, setDefaultLocation] = useState(false);
@@ -38,11 +39,11 @@ export default function CreateCourse(props: any) {
                 .then(res => res.json())
                 .then(json => {
                     if (json.status === 200) {
-                        alert('데이터 성공에 처리했습니다.');
+                        toast.success('코스가 정상적으로 등록되었습니다.');
                     } else if (json.status === 401) {
-                        alert('로그인 정보가 없습니다.');
+                        toast.error('로그인 정보가 없습니다.');
                     } else {
-                        alert('데이터 처리 중 오류가 발생했습니다.');
+                        toast.error('데이터 처리 중 오류가 발생했습니다.');
                     }
 
                     setDrawState(false);

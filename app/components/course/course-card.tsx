@@ -6,6 +6,7 @@ import Image from 'next/image';
 import {RiCheckLine, RiCloseFill, RiCloseLine, RiDeleteBin4Line, RiHeart3Line, RiThumbUpLine} from "react-icons/ri";
 import {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
+import toast from "react-hot-toast";
 
 export default function CourseCard(props: any) {
     const { data: session } = useSession();
@@ -28,11 +29,11 @@ export default function CourseCard(props: any) {
             .then(res => {
                 setLikeCount(res.data.count._count.isLike)
             });
-    }, [likeCount, cardData]);
+    }, [likeCount, cardData, getCourseLikes]);
 
     const addCourseLike = async () => {
         if (!session) {
-            alert('리뷰를 추천하기 위해서는 로그인이 필요합니다.');
+            toast.error('리뷰를 추천하기 위해 로그인이 필요합니다.');
             return;
         }
 
@@ -47,7 +48,7 @@ export default function CourseCard(props: any) {
             return res.json()
         }).then(data => {
             if (data.status !== 200) {
-                alert('처리 중 오류가 발생했습니다.');
+                toast.error('데이터 처리 중 오류가 발생했습니다.');
             } else {
                 setCardData({
                     ...cardData,
@@ -63,7 +64,7 @@ export default function CourseCard(props: any) {
         }
 
         if (!session) {
-            alert('잘못된 요청입니다.');
+            toast.error('로그인 정보가 없습니다.');
             return;
         }
 
@@ -76,11 +77,11 @@ export default function CourseCard(props: any) {
         .then((res: any) => res.json())
         .then((data: any) => {
             if (data && data.status === 200) {
-                alert('코스가 정상적으로 삭제되었습니다.');
+                toast.success('코스가 정상적으로 삭제되었습니다.');
                 getCourses();
                 setCardHidden(false);
             } else {
-                alert('데이터 처리 중 오류가 발생했습니다.');
+                toast.error('데이터 처리 중 오류가 발생했습니다.');
             }
         })
 

@@ -2,6 +2,7 @@ import {Button, Image, Textarea} from "@nextui-org/react";
 import {useEffect, useState} from "react";
 import {signIn, useSession} from "next-auth/react";
 import {RiLoginBoxLine} from "react-icons/ri";
+import toast from "react-hot-toast";
 
 export default function ReviewInput(props: any) {
     const { getSingleCourse } = props;
@@ -17,10 +18,10 @@ export default function ReviewInput(props: any) {
         }).then(res => {
             res.json().then(data => {
                 if (data && data.status === 200) {
-                    alert('댓글이 등록되었습니다.')
+                    toast.success('댓글이 등록되었습니다.');
                     getSingleCourse(props.courseId);
                 } else {
-                    alert('댓글 등록 중 오류가 발생했습니다.');
+                    toast.error('댓글 등록 중 오류가 발생했습니다.');
                 }
             });
         })

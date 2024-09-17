@@ -1,12 +1,22 @@
-import {MapBrowserEvent, RInteraction, RLayerVector, RMap, ROSM} from "rlayers";
+import {
+    MapBrowserEvent,
+    RInteraction,
+    RLayerTile,
+    RLayerTileWebGL,
+    RLayerVector, RLayerVectorTile,
+    RLayerWMS,
+    RLayerWMTS,
+    RMap,
+    ROSM
+} from "rlayers";
 import {fromLonLat} from "ol/proj";
 import {Geometry} from "ol/geom";
-import {useEffect, useState} from "react";
+import {useEffect, useMemo, useState} from "react";
 import {mouseOnly, never, shiftKeyOnly, singleClick, touchOnly} from "ol/events/condition";
 
 import {Button, useDisclosure} from "@nextui-org/react";
 
-import {useRStyle} from "rlayers/style";
+import {RFill, RStroke, RStyle, useRStyle} from "rlayers/style";
 import {Feature} from "ol";
 import {SignInButton} from "@/app/components/sign-in";
 import CreateCourse from "@/app/components/course/create-course";
@@ -18,6 +28,8 @@ import ServerCourses from "@/app/components/course/server-courses";
 import dayjs from "dayjs";
 import {Simulate} from "react-dom/test-utils";
 import pointerDown = Simulate.pointerDown;
+import Geolocation from "@/app/components/geolocation";
+import {MVT} from "ol/format";
 
 export default function Map() {
     const {isOpen, onOpen, onClose} = useDisclosure();
@@ -105,6 +117,10 @@ export default function Map() {
         myHlStrokeColor: 'rgba(0,212,255,0.7)'
     }
 
+    const [info, setInfo] = useState("...retrieving capabilities..");
+    const [format, setFormat] = useState<string | null>(null);
+    const parser = useMemo(() => new MVT(), []);
+    const key = "0EFF8B28-914F-3F00-A6B0-5CA57BBD57A2";
     return (
         <>
             <SignInButton setDrawState={setDrawState} drawState={isDrawState} />
@@ -113,7 +129,14 @@ export default function Map() {
 
             <RMap className='example-map w-screen h-screen'
                   initial={{center: fromLonLat([126.734086, 37.715133]), zoom: 12}}>
-                <ROSM/>
+
+                <RLayerTileWebGL
+                    properties={{ label: "Transport" }}
+                    url={`https://api.vworld.kr/req/wmts/1.0.0/${key}/Base/{z}/{y}/{x}.png`}
+                />
+
+                <Geolocation />
+
                 {/*<CourseEvent config={featureConfig} getSingleCourse={getSingleCourse}/>*/}
                 <ServerCourses
                     towns={towns}
@@ -125,7 +148,6 @@ export default function Map() {
                     config={featureConfig}
                     getSingleCourse={getSingleCourse}
                 />
-
                 {
                     isDrawState &&
                     <RLayerVector zIndex={0}>
