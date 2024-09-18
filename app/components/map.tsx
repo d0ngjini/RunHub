@@ -30,12 +30,12 @@ import {Simulate} from "react-dom/test-utils";
 import pointerDown = Simulate.pointerDown;
 import Geolocation from "@/app/components/geolocation";
 import {MVT} from "ol/format";
+import useSWR from "swr";
 
 export default function Map() {
     const {isOpen, onOpen, onClose} = useDisclosure();
 
     const [isDrawState, setDrawState] = useState<boolean>(false);
-    const [serverCourses, setServerCourses] = useState<Course[]>([]);
     const [current, setCurrent] = useState(
         null as Feature<Geometry> | null
     );
@@ -58,38 +58,27 @@ export default function Map() {
         flatCoordinates: []
     });
 
-    function getCourses() {
-        const courses = fetch('/api/courses', {
-            method: 'GET',
+    const { data, mutate, isLoading } = useSWR('/api/courses');
+    const serverCourses: Course[] = [];
+
+    if (!isLoading) {
+
+        data.content.forEach((d: Course) => {
+            const course: Course = {
+                userId: d.userId,
+                id: d.id,
+                name: d.name,
+                address: d.address,
+                flatCoordinates: JSON.parse(d.flatCoordinates),
+                description: d.description,
+                extent: d.extent,
+                createdAt: d.createdAt,
+            }
+
+            serverCourses.push(course)
         });
-
-        courses
-            .then(res => res.json())
-            .then(data => {
-                const courses: Course[] = [];
-
-                data.content.forEach((d: Course) => {
-                    const course: Course = {
-                        userId: d.userId,
-                        id: d.id,
-                        name: d.name,
-                        address: d.address,
-                        flatCoordinates: JSON.parse(d.flatCoordinates),
-                        description: d.description,
-                        extent: d.extent,
-                        createdAt: d.createdAt,
-                    }
-
-                    courses.push(course)
-                });
-
-                setServerCourses(courses);
-            });
     }
 
-    useEffect(() => {
-        getCourses();
-    }, [])
 
     const towns = useRStyle();
     const currentStyles = useRStyle();
@@ -117,14 +106,12 @@ export default function Map() {
         myHlStrokeColor: 'rgba(0,212,255,0.7)'
     }
 
-    const [info, setInfo] = useState("...retrieving capabilities..");
-    const [format, setFormat] = useState<string | null>(null);
-    const parser = useMemo(() => new MVT(), []);
-    const key = "0EFF8B28-914F-3F00-A6B0-5CA57BBD57A2";
+    const key = process.env.NEXT_PUBLIC_VWORLD_TOKEN;
+
     return (
         <>
             <SignInButton setDrawState={setDrawState} drawState={isDrawState} />
-            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse} getCourses={getCourses}/>
+            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse}/>
             <CourseStyle towns={towns} currentStyles={currentStyles} config={featureConfig}/>
 
             <RMap className='example-map w-screen h-screen'
@@ -175,7 +162,7 @@ export default function Map() {
                           isOpen={isOpen}
                           onClose={onClose}
                           setDrawState={setDrawState}
-                          getCourses={getCourses}/>
+            />
         </>
     )
 }

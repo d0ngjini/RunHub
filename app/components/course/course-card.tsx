@@ -1,35 +1,19 @@
 import {Card, CardBody, CardHeader} from "@nextui-org/card";
 import ReviewList from "@/app/components/reviews/review-list";
 import ReviewInput from "@/app/components/reviews/review-input";
-import {Button, card, Divider} from "@nextui-org/react";
+import {Button, card, Divider, Spinner} from "@nextui-org/react";
 import Image from 'next/image';
 import {RiCheckLine, RiCloseFill, RiCloseLine, RiDeleteBin4Line, RiHeart3Line, RiThumbUpLine} from "react-icons/ri";
-import {useEffect, useState} from "react";
 import {useSession} from "next-auth/react";
 import toast from "react-hot-toast";
+import useSWR, {mutate} from "swr";
+import useSingleCourse from "@/app/components/swr/use-single-course";
 
 export default function CourseCard(props: any) {
     const { data: session } = useSession();
-    const {isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse, getCourses } = props;
-    const [likeCount, setLikeCount] = useState(-1);
+    const {isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse } = props;
 
-    const getCourseLikes = async () => {
-        return await fetch(`/api/courses/${cardData.id}/like`, {
-            method: 'GET',
-        })
-    };
-
-    useEffect(() => {
-        if (!cardData.id) {
-            return;
-        }
-
-        getCourseLikes()
-            .then(res => res.json())
-            .then(res => {
-                setLikeCount(res.data.count._count.isLike)
-            });
-    }, [likeCount, cardData, getCourseLikes]);
+    console.log('cardData', cardData);
 
     const addCourseLike = async () => {
         if (!session) {
@@ -46,8 +30,8 @@ export default function CourseCard(props: any) {
             }),
         }).then(res => {
             return res.json()
-        }).then(data => {
-            if (data.status !== 200) {
+        }).then(res => {
+            if (res.status !== 200) {
                 toast.error('데이터 처리 중 오류가 발생했습니다.');
             } else {
                 setCardData({
@@ -78,7 +62,6 @@ export default function CourseCard(props: any) {
         .then((data: any) => {
             if (data && data.status === 200) {
                 toast.success('코스가 정상적으로 삭제되었습니다.');
-                getCourses();
                 setCardHidden(false);
             } else {
                 toast.error('데이터 처리 중 오류가 발생했습니다.');
@@ -88,11 +71,11 @@ export default function CourseCard(props: any) {
     }
 
     console.log('user session', session);
-    
+
     return (
         <>
             {
-                isCardHidden &&
+                ( isCardHidden )&&
                 <Card className="absolute z-40 w-full md:w-96 py-1 bottom-0 mb-0 md:mb-4 rounded-none md:rounded-xl right-1/2 translate-x-1/2">
                     {
                         session && session.user?.id === cardData.userId &&
@@ -116,19 +99,26 @@ export default function CourseCard(props: any) {
                                 <p className="text-tiny uppercase font-bold">{cardData.description}</p>
                             </div>
                             {
-                                cardData.isLiked
-                                    ?
-                                    <Button size="sm" variant="bordered" color="success" className="small" title="좋아요" onClick={() => {
-                                        void addCourseLike()
-                                    }}>
-                                        <RiCheckLine />추천됨 {likeCount}
-                                    </Button>
-                                    :
-                                    <Button size="sm" variant="bordered" color="primary" className="small" title="좋아요" onClick={ () => {
-                                        void addCourseLike()
-                                    }}>
-                                        <RiThumbUpLine />추천 {likeCount}
-                                    </Button>
+                                // isLoading
+                                //     ?
+                                //     <Button size="sm" variant="bordered" color="default" className="text-default">
+                                //         <Spinner size="sm" color="default" /> 로딩 중
+                                //     </Button>
+                                //     :
+                                <Button size="sm" variant="bordered" color={ cardData.isLiked ? 'success' : 'primary' } className="small font-bold" title="좋아요" onClick={() => {
+                                    void addCourseLike()
+                                }}>
+                                    {
+                                        cardData.isLiked ?
+                                            <>
+                                                <RiCheckLine size={14} /> 완료 { cardData.likedCount }
+                                            </>
+                                            :
+                                            <>
+                                                <RiThumbUpLine size={14} /> 추천 { cardData.likedCount }
+                                            </>
+                                    }
+                                </Button>
                             }
                         </div>
                     </CardHeader>

@@ -76,15 +76,11 @@ export default function ServerCourses(props: any) {
         })
     ]
 
-
     const { data: session } = useSession();
 
     useEffect(() => {
         const myArr: Course[] = [];
         const otherArr: Course[] = [];
-
-        console.log('session', session);
-        console.log('serverCourses', serverCourses);
 
         if (session === null) {
             setOtherCourses(serverCourses);

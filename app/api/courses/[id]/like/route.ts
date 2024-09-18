@@ -4,10 +4,6 @@ import prisma from "@/app/prisma/db";
 export async function GET(request: Request,  { params } : {
     params: Record<string, any>;
 }) {
-
-    console.log('params', params)
-    console.log('/courses/id/like GET', request);
-
     const count = await prisma.courseLike.aggregate({
         _count: {
             isLike: true
@@ -21,9 +17,7 @@ export async function GET(request: Request,  { params } : {
     return Response.json({
         status: 200,
         message: 'success',
-        data: {
-            count: count,
-        }
+        count: count._count.isLike,
     })
 }
 

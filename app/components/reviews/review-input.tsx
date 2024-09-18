@@ -3,10 +3,12 @@ import {useEffect, useState} from "react";
 import {signIn, useSession} from "next-auth/react";
 import {RiLoginBoxLine} from "react-icons/ri";
 import toast from "react-hot-toast";
+import useSingleCourse from "@/app/components/swr/use-single-course";
 
 export default function ReviewInput(props: any) {
-    const { getSingleCourse } = props;
     const [reviewVal, setReviewVal] = useState("");
+    const { data, mutate, isLoading, error } = useSingleCourse(props.courseId);
+
     const onSubmitHandler = async (e: any) => {
         e.preventDefault();
 
@@ -16,10 +18,10 @@ export default function ReviewInput(props: any) {
                 value: reviewVal,
             }),
         }).then(res => {
-            res.json().then(data => {
-                if (data && data.status === 200) {
+            res.json().then(json => {
+                if (json && json.status === 200) {
                     toast.success('댓글이 등록되었습니다.');
-                    getSingleCourse(props.courseId);
+                    mutate();
                 } else {
                     toast.error('댓글 등록 중 오류가 발생했습니다.');
                 }

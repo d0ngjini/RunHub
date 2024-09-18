@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 
 export default function CreateCourse(props: any) {
     const [isSetDefaultLocation, setDefaultLocation] = useState(false);
-    const { drawnCourse, setDrawnCourse,isOpen, onClose, setDrawState, getCourses } = props;
+    const { drawnCourse, setDrawnCourse,isOpen, onClose, setDrawState } = props;
 
     const onOpenChange = async function (isOpen: boolean) {
         if (isOpen) {
@@ -16,7 +16,6 @@ export default function CreateCourse(props: any) {
         } else {
             onClose();
             setDefaultLocation(false);
-            getCourses();
             setDrawState(false);
             setDrawnCourse(null)
         }
@@ -47,7 +46,6 @@ export default function CreateCourse(props: any) {
                     }
 
                     setDrawState(false);
-                    getCourses();
                     onClose();
                 });
         }
