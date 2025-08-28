@@ -1,13 +1,15 @@
-import {Button, Image, Textarea} from "@nextui-org/react";
-import {useEffect, useState} from "react";
-import {signIn, useSession} from "next-auth/react";
-import {RiLoginBoxLine} from "react-icons/ri";
+import { Button, Image, Textarea } from "@nextui-org/react";
+import { useEffect, useState } from "react";
+import { signIn, useSession } from "next-auth/react";
+import { RiLoginBoxLine } from "react-icons/ri";
 import toast from "react-hot-toast";
-import useSingleCourse from "@/app/components/swr/use-single-course";
+import { useSingleCourse } from "@/lib/fetcher/useSingleCourse";
 
 export default function ReviewInput(props: any) {
     const [reviewVal, setReviewVal] = useState("");
     const { data, mutate, isLoading, error } = useSingleCourse(props.courseId);
+
+    console.log('data', data);
 
     const onSubmitHandler = async (e: any) => {
         e.preventDefault();
@@ -68,10 +70,10 @@ export default function ReviewInput(props: any) {
                 value={reviewVal}
                 onValueChange={setReviewVal}
                 isRequired={true}
-                // errorMessage="리뷰가 입력되지 않았어요!"
+            // errorMessage="리뷰가 입력되지 않았어요!"
             />
             <Button className="absolute right-6" color="primary" type={"submit"} variant={"faded"} isIconOnly>
-                <Image width={"24"} src="https://www.svgrepo.com/show/532154/check.svg"/>
+                <Image width={"24"} src="https://www.svgrepo.com/show/532154/check.svg" />
             </Button>
         </form>
     );

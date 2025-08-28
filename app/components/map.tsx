@@ -9,31 +9,31 @@ import {
     RMap,
     ROSM
 } from "rlayers";
-import {fromLonLat} from "ol/proj";
-import {Geometry} from "ol/geom";
-import {useEffect, useMemo, useState} from "react";
-import {mouseOnly, never, shiftKeyOnly, singleClick, touchOnly} from "ol/events/condition";
+import { fromLonLat } from "ol/proj";
+import { Geometry } from "ol/geom";
+import { useEffect, useMemo, useState } from "react";
+import { mouseOnly, never, shiftKeyOnly, singleClick, touchOnly } from "ol/events/condition";
 
-import {Button, useDisclosure} from "@nextui-org/react";
+import { Button, useDisclosure } from "@nextui-org/react";
 
-import {RFill, RStroke, RStyle, useRStyle} from "rlayers/style";
-import {Feature} from "ol";
-import {SignInButton} from "@/app/components/sign-in";
+import { RFill, RStroke, RStyle, useRStyle } from "rlayers/style";
+import { Feature } from "ol";
+import { SignInButton } from "@/app/components/sign-in";
 import CreateCourse from "@/app/components/course/create-course";
 import CourseCard from "@/app/components/course/course-card";
 import CourseStyle from "./course/course-style";
 import CourseEvent from "@/app/components/course/course-event";
-import {Course} from "@prisma/client";
+import { Course } from "@prisma/client";
 import ServerCourses from "@/app/components/course/server-courses";
 import dayjs from "dayjs";
-import {Simulate} from "react-dom/test-utils";
+import { Simulate } from "react-dom/test-utils";
 import pointerDown = Simulate.pointerDown;
-import Geolocation from "@/app/components/geolocation";
-import {MVT} from "ol/format";
+// import Geolocation from "@/app/components/geolocation";
+import { MVT } from "ol/format";
 import useSWR from "swr";
 
 export default function Map() {
-    const {isOpen, onOpen, onClose} = useDisclosure();
+    const { isOpen, onOpen, onClose } = useDisclosure();
 
     const [isDrawState, setDrawState] = useState<boolean>(false);
     const [current, setCurrent] = useState(
@@ -87,12 +87,12 @@ export default function Map() {
         await fetch('/api/courses/' + id, {
             method: 'GET',
         })
-        .then(res => res.json())
-        .then(data => {
-            data.content.createdAt = dayjs(data.content.createdAt).format('YYYY-MM-DD HH:mm:ss')
-            setCardData(data.content);
-            setCardHidden(true);
-        });
+            .then(res => res.json())
+            .then(data => {
+                data.content.createdAt = dayjs(data.content.createdAt).format('YYYY-MM-DD HH:mm:ss')
+                setCardData(data.content);
+                setCardHidden(true);
+            });
     }
 
     const featureConfig = {
@@ -111,18 +111,18 @@ export default function Map() {
     return (
         <>
             <SignInButton setDrawState={setDrawState} drawState={isDrawState} />
-            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse}/>
-            <CourseStyle towns={towns} currentStyles={currentStyles} config={featureConfig}/>
+            <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse} />
+            <CourseStyle towns={towns} currentStyles={currentStyles} config={featureConfig} />
 
             <RMap className='example-map w-screen h-screen'
-                  initial={{center: fromLonLat([126.734086, 37.715133]), zoom: 12}}>
+                initial={{ center: fromLonLat([126.734086, 37.715133]), zoom: 12 }}>
 
                 <RLayerTileWebGL
                     properties={{ label: "Transport" }}
                     url={`https://api.vworld.kr/req/wmts/1.0.0/${key}/Base/{z}/{y}/{x}.png`}
                 />
 
-                <Geolocation />
+                {/* <Geolocation /> */}
 
                 {/*<CourseEvent config={featureConfig} getSingleCourse={getSingleCourse}/>*/}
                 <ServerCourses
@@ -158,10 +158,10 @@ export default function Map() {
                 }
             </RMap>
             <CreateCourse drawnCourse={drawnCourse}
-                          setDrawnCourse={setDrawnCourse}
-                          isOpen={isOpen}
-                          onClose={onClose}
-                          setDrawState={setDrawState}
+                setDrawnCourse={setDrawnCourse}
+                isOpen={isOpen}
+                onClose={onClose}
+                setDrawState={setDrawState}
             />
         </>
     )

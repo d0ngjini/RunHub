@@ -1,17 +1,15 @@
-import {Card, CardBody, CardHeader} from "@nextui-org/card";
+import { Card, CardBody, CardHeader } from "@nextui-org/card";
 import ReviewList from "@/app/components/reviews/review-list";
 import ReviewInput from "@/app/components/reviews/review-input";
-import {Button, card, Divider, Spinner} from "@nextui-org/react";
+import { Button, card, Divider, Spinner } from "@nextui-org/react";
 import Image from 'next/image';
-import {RiCheckLine, RiCloseFill, RiCloseLine, RiDeleteBin4Line, RiHeart3Line, RiThumbUpLine} from "react-icons/ri";
-import {useSession} from "next-auth/react";
+import { RiCheckLine, RiCloseFill, RiCloseLine, RiDeleteBin4Line, RiHeart3Line, RiThumbUpLine } from "react-icons/ri";
+import { useSession } from "next-auth/react";
 import toast from "react-hot-toast";
-import useSWR, {mutate} from "swr";
-import useSingleCourse from "@/app/components/swr/use-single-course";
 
 export default function CourseCard(props: any) {
     const { data: session } = useSession();
-    const {isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse } = props;
+    const { isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse } = props;
 
     console.log('cardData', cardData);
 
@@ -58,15 +56,15 @@ export default function CourseCard(props: any) {
                 courseId: cardData.id,
             })
         })
-        .then((res: any) => res.json())
-        .then((data: any) => {
-            if (data && data.status === 200) {
-                toast.success('코스가 정상적으로 삭제되었습니다.');
-                setCardHidden(false);
-            } else {
-                toast.error('데이터 처리 중 오류가 발생했습니다.');
-            }
-        })
+            .then((res: any) => res.json())
+            .then((data: any) => {
+                if (data && data.status === 200) {
+                    toast.success('코스가 정상적으로 삭제되었습니다.');
+                    setCardHidden(false);
+                } else {
+                    toast.error('데이터 처리 중 오류가 발생했습니다.');
+                }
+            })
 
     }
 
@@ -75,7 +73,7 @@ export default function CourseCard(props: any) {
     return (
         <>
             {
-                ( isCardHidden )&&
+                (isCardHidden) &&
                 <Card className="absolute z-40 w-full md:w-96 py-1 bottom-0 mb-0 md:mb-4 rounded-none md:rounded-xl right-1/2 translate-x-1/2">
                     {
                         session && session.user?.id === cardData.userId &&
@@ -105,30 +103,30 @@ export default function CourseCard(props: any) {
                                 //         <Spinner size="sm" color="default" /> 로딩 중
                                 //     </Button>
                                 //     :
-                                <Button size="sm" variant="bordered" color={ cardData.isLiked ? 'success' : 'primary' } className="small font-bold" title="좋아요" onClick={() => {
+                                <Button size="sm" variant="bordered" color={cardData.isLiked ? 'success' : 'primary'} className="small font-bold" title="좋아요" onClick={() => {
                                     void addCourseLike()
                                 }}>
                                     {
                                         cardData.isLiked ?
                                             <>
-                                                <RiCheckLine size={14} /> 완료 { cardData.likedCount }
+                                                <RiCheckLine size={14} /> 완료 {cardData.likedCount}
                                             </>
                                             :
                                             <>
-                                                <RiThumbUpLine size={14} /> 추천 { cardData.likedCount }
+                                                <RiThumbUpLine size={14} /> 추천 {cardData.likedCount}
                                             </>
                                     }
                                 </Button>
                             }
                         </div>
                     </CardHeader>
-                    <Divider/>
+                    <Divider />
                     <div className="px-3 pt-3 text-sm font-semibold">리뷰 <span className="text-xs text-gray-500">({cardData.courseComments.length})</span></div>
                     <CardBody className="items-center flex-col gap-3">
-                        <ReviewList data={cardData.courseComments}/>
-                        <ReviewInput courseId={cardData.id} getSingleCourse={ getSingleCourse } />
+                        <ReviewList data={cardData.courseComments} />
+                        <ReviewInput courseId={cardData.id} getSingleCourse={getSingleCourse} />
                     </CardBody>
-                </Card> 
+                </Card>
             }
         </>
     )

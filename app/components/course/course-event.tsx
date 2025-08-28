@@ -1,8 +1,8 @@
-import {RFeature, RFeatureUIEvent, RLayerVector} from "rlayers";
+import { RFeature, RFeatureUIEvent, RLayerVector } from "rlayers";
 import dayjs from "dayjs";
 
 export default function CourseEvent(props: any) {
-    const {current, currentStyles, getSingleCourse} = props;
+    const { current, currentStyles, getSingleCourse } = props;
 
     return (
         <>
@@ -13,12 +13,12 @@ export default function CourseEvent(props: any) {
                             <RFeature geometry={current.getGeometry()} onSingleClick={(e: RFeatureUIEvent) => {
                                 getSingleCourse(e.target.getProperties().id)
                             }}
-                            properties={
-                              {
-                                  'name': current.getProperties().name,
-                                  'id': current.getProperties().id,
-                              }
-                            }/>
+                                properties={
+                                    {
+                                        'name': current.getProperties().name,
+                                        'id': current.getProperties().id,
+                                    }
+                                } /> */}
                         </div>
                     ) : null
                 }

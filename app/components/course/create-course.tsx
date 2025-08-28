@@ -1,14 +1,14 @@
-import {Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Textarea} from "@nextui-org/react";
-import {RFeature, RLayerVector, RMap, ROSM} from "rlayers";
-import {fromLonLat} from "ol/proj";
-import {LineString, Point} from "ol/geom";
-import {RStroke, RStyle, RText} from "rlayers/style";
-import {useState} from "react";
+import { Button, Input, Modal, ModalBody, ModalContent, ModalHeader, Textarea } from "@nextui-org/react";
+import { RFeature, RLayerVector, RMap, ROSM } from "rlayers";
+import { fromLonLat } from "ol/proj";
+import { LineString, Point } from "ol/geom";
+import { RStroke, RStyle, RText } from "rlayers/style";
+import { useState } from "react";
 import toast from "react-hot-toast";
 
 export default function CreateCourse(props: any) {
     const [isSetDefaultLocation, setDefaultLocation] = useState(false);
-    const { drawnCourse, setDrawnCourse,isOpen, onClose, setDrawState } = props;
+    const { drawnCourse, setDrawnCourse, isOpen, onClose, setDrawState } = props;
 
     const onOpenChange = async function (isOpen: boolean) {
         if (isOpen) {
@@ -21,7 +21,7 @@ export default function CreateCourse(props: any) {
         }
     };
 
-    const handleSubmit = async function (e : any) {
+    const handleSubmit = async function (e: any) {
         e.preventDefault();
 
         const form = e.target;
@@ -61,56 +61,56 @@ export default function CreateCourse(props: any) {
                             <ModalBody>
                                 <form method="post" onSubmit={handleSubmit}>
                                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mb-2">
-                                        <Input isRequired type="text" name="name" label="코스명"/>
+                                        <Input isRequired type="text" name="name" label="코스명" />
                                     </div>
                                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mb-2">
-                                        <Textarea isRequired type="text" name={"description"} label="설명"/>
+                                        <Textarea isRequired type="text" name={"description"} label="설명" />
                                     </div>
                                     <div className="flex w-full flex-wrap md:flex-nowrap gap-4 mb-2 hidden">
-                                        <Input type="hidden" label="코스좌표" name={"flatCoordinates"} value={(drawnCourse.flatCoordinates).toString()} readOnly={true}/>
+                                        <Input type="hidden" label="코스좌표" name={"flatCoordinates"} value={(drawnCourse.flatCoordinates).toString()} readOnly={true} />
                                     </div>
 
                                     <div className="w-full h-48 mb-4">
                                         <RMap className='w-full h-full'
-                                              initial={{center: fromLonLat([2.364, 48.82]), zoom: 11}}
-                                              onPostRender={
-                                                  e => {
-                                                      if (isSetDefaultLocation) {
-                                                          return;
-                                                      } else {
-                                                          setDefaultLocation(true)
-                                                          e.target.getView().fit(drawnCourse.extent, {
-                                                              padding: [30, 20, 20, 20]
-                                                          })
-                                                      }
-                                                  }
-                                              }
+                                            initial={{ center: fromLonLat([2.364, 48.82]), zoom: 11 }}
+                                            onPostRender={
+                                                e => {
+                                                    if (isSetDefaultLocation) {
+                                                        return;
+                                                    } else {
+                                                        setDefaultLocation(true)
+                                                        e.target.getView().fit(drawnCourse.extent, {
+                                                            padding: [30, 20, 20, 20]
+                                                        })
+                                                    }
+                                                }
+                                            }
                                         >
-                                            <ROSM/>
+                                            <ROSM />
                                             <RLayerVector zIndex={10}>
                                                 <RFeature geometry={new LineString(drawnCourse.flatCoordinates)}>
                                                     <RStyle zIndex={1}>
-                                                        <RStroke color="#f96d00" width={3}/>
+                                                        <RStroke color="#f96d00" width={3} />
                                                     </RStyle>
                                                 </RFeature>
                                                 <RFeature geometry={new LineString(drawnCourse.flatCoordinates)}>
                                                     <RStyle zIndex={0}>
-                                                        <RStroke color="#f2f2f2" width={8}/>
+                                                        <RStroke color="#f2f2f2" width={8} />
                                                     </RStyle>
                                                 </RFeature>
                                                 <RFeature geometry={new Point(drawnCourse.flatCoordinates[0])}>
                                                     <RStyle zIndex={3}>
                                                         <RText text={'시작'} font={'bold 12px consolas'} offsetY={-5}>
-                                                            <RStroke color={'white'} width={2}/>
+                                                            <RStroke color={'white'} width={2} />
                                                         </RText>
                                                     </RStyle>
                                                 </RFeature>
                                                 <RFeature
                                                     geometry={new Point(drawnCourse.flatCoordinates[drawnCourse.flatCoordinates.length - 1])}>
                                                     <RStyle zIndex={3}>
-                                                        <RStroke color={'white'} width={1}/>
+                                                        <RStroke color={'white'} width={1} />
                                                         <RText text={'끝'} font={'bold 12px consolas'} offsetY={-10}>
-                                                            <RStroke color={'white'} width={2}/>
+                                                            <RStroke color={'white'} width={2} />
                                                         </RText>
                                                     </RStyle>
                                                 </RFeature>
