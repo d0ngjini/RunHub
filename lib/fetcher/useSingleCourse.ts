@@ -42,9 +42,11 @@ export const useSingleCourse = (courseId: string | null) => {
         courseId ? `/api/courses/${courseId}` : null,
         fetcher,
         {
-            revalidateOnFocus: false,
+            revalidateOnFocus: true,
             revalidateOnReconnect: true,
             errorRetryCount: 3,
+            refreshInterval: 0, // 자동 갱신 비활성화
+            dedupingInterval: 1000, // 1초 내 중복 요청 방지
         }
     );
 
@@ -54,9 +56,11 @@ export const useSingleCourse = (courseId: string | null) => {
         isError: error,
         error,
         mutate,
-        // 편의를 위한 추가 속성들
+        // 안전한 기본값 설정
         isLiked: data?.content?.isLiked ?? false,
         likedCount: data?.content?.likedCount ?? 0,
         comments: data?.content?.courseComments ?? [],
+        // 추가 안전성 체크
+        hasComments: Array.isArray(data?.content?.courseComments) && data.content.courseComments.length > 0,
     };
 };

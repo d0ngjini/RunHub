@@ -1,8 +1,8 @@
 // GET /api/course/[id] - 사용자가 클릭한 지점의 코스 조회
-import {NextRequest, NextResponse} from "next/server";
-import {Course} from "@prisma/client";
+import { NextRequest, NextResponse } from "next/server";
+import { Course } from "@prisma/client";
 import prisma from "@/app/prisma/db";
-import {auth} from "@/app/auth";
+import { auth } from "@/app/auth";
 
 export async function GET(request: NextRequest, { params }: {
     params: {
@@ -17,7 +17,7 @@ export async function GET(request: NextRequest, { params }: {
         include: {
             courseComments: {
                 orderBy: {
-                  createdAt: 'desc'
+                    createdAt: 'desc'
                 },
                 include: {
                     User: {
@@ -60,7 +60,8 @@ export async function GET(request: NextRequest, { params }: {
             },
         });
 
-        if (userLiked.length === 0) {
+        // 안전한 length 체크
+        if (!userLiked || userLiked.length === 0) {
             return Response.json({
                 status: 200,
                 content: {
@@ -74,7 +75,7 @@ export async function GET(request: NextRequest, { params }: {
                 status: 200,
                 content: {
                     ...course,
-                    isLiked: userLiked[0].isLike,
+                    isLiked: userLiked[0]?.isLike ?? false,
                     likedCount: likeCount
                 }
             });
