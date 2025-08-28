@@ -18,7 +18,7 @@ export default function CourseEvent(props: any) {
                                         'name': current.getProperties().name,
                                         'id': current.getProperties().id,
                                     }
-                                } /> */}
+                                } />
                         </div>
                     ) : null
                 }

@@ -7,9 +7,9 @@ import { useSingleCourse } from "@/lib/fetcher/useSingleCourse";
 
 export default function ReviewInput(props: any) {
     const [reviewVal, setReviewVal] = useState("");
-    const { data, mutate, isLoading, error } = useSingleCourse(props.courseId);
+    const { course, mutate, isLoading, error } = useSingleCourse(props.courseId);
 
-    console.log('data', data);
+    console.log('course', course);
 
     const onSubmitHandler = async (e: any) => {
         e.preventDefault();

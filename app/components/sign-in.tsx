@@ -1,12 +1,15 @@
 "use client"
 
-import {signIn, signOut, useSession} from "next-auth/react"
-import {Button, DropdownItem, DropdownMenu, Image} from "@nextui-org/react";
+import { signIn, signOut, useSession } from "next-auth/react"
+import { Button, DropdownItem, DropdownMenu, Image } from "@nextui-org/react";
 import Avatar from 'boring-avatars';
-import {Dropdown, DropdownTrigger} from "@nextui-org/dropdown";
-import {RiArrowDropDownFill, RiLogoutBoxLine, RiMarkPenLine} from "react-icons/ri";
-import {useCallback, useEffect, useState} from "react";
+import { Dropdown, DropdownTrigger } from "@nextui-org/dropdown";
+import { RiArrowDropDownFill, RiLogoutBoxLine, RiMarkPenLine } from "react-icons/ri";
+import { useCallback, useEffect, useState } from "react";
 import dayjs from "dayjs";
+import duration from "dayjs/plugin/duration";
+
+dayjs.extend(duration);
 
 export function SignInButton(props: any) {
     const { data: session } = useSession();
@@ -36,7 +39,8 @@ export function SignInButton(props: any) {
     }, [session, calculateTimeLeft]);
 
     // 남은 시간을 'mm:ss' 형식으로 변환하는 함수
-    const formatTime = (timeInMilliseconds: number) => {
+    const formatTime = (timeInMilliseconds: number | undefined) => {
+        if (!timeInMilliseconds) return "00분 00초";
         const duration = dayjs.duration(timeInMilliseconds);
         const minutes = duration.minutes();
         const seconds = duration.seconds();
@@ -52,7 +56,7 @@ export function SignInButton(props: any) {
         {
             key: "new",
             label: "러닝코스 추가",
-            icon: <RiMarkPenLine/>,
+            icon: <RiMarkPenLine />,
             onClick: () => {
                 setDrawState(!isDrawState)
             },
@@ -60,7 +64,7 @@ export function SignInButton(props: any) {
         {
             key: "delete",
             label: "로그아웃",
-            icon: <RiLogoutBoxLine/>,
+            icon: <RiLogoutBoxLine />,
             onClick: () => {
                 signOut();
             },
@@ -90,7 +94,7 @@ export function SignInButton(props: any) {
                                 <RiArrowDropDownFill />
                             </Button>
                         </DropdownTrigger>
-                        <DropdownMenu aria-label="Dynamic Actions" items={ items } disabledKeys={ ["time"] }>
+                        <DropdownMenu aria-label="Dynamic Actions" items={items} disabledKeys={["time"]}>
                             {(item) => (
                                 <DropdownItem
                                     key={item.key}
@@ -114,9 +118,9 @@ export function SignInButton(props: any) {
     return (
         <>
             <Button className={"absolute z-20 top-2 right-2 flex justify-between items-center gap-2 bg-white p-2 rounded shadow"}
-                    onClick={(e: any) => {
-                        signIn()
-                    }}>
+                onClick={(e: any) => {
+                    signIn()
+                }}>
                 <Avatar
                     size={24}
                     name={"noname"}
