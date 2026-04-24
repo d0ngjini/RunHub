@@ -1,10 +1,10 @@
 import {RFeature, RFeatureUIEvent, RLayerVector} from "rlayers";
-import {useCallback, useEffect, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {LineString} from "ol/geom";
 import {Fill, Stroke, Style} from "ol/style";
 import {Feature} from "ol";
-import {useSession} from "next-auth/react";
-import {Course} from "@prisma/client";
+import { authClient } from "@/lib/auth-client";
+import type { Course } from "@/lib/domain-types";
 
 export default function ServerCourses(props: any) {
     const { towns, current, setCurrent, prevCourse, serverCourses, isDrawState, config, getSingleCourse } = props;
@@ -12,7 +12,7 @@ export default function ServerCourses(props: any) {
     const [myCourses, setMyCourses] = useState<Course[]>([]);
     const [otherCourses, setOtherCourses] = useState<Course[]>([]);
 
-    const selectStyles = [
+    const selectStyles = useMemo(() => ([
         new Style({
             stroke: new Stroke({
                 color: config.mainStrokeColor,
@@ -25,10 +25,15 @@ export default function ServerCourses(props: any) {
                 color: config.baseStrokeColor,
                 width: config.newBaseStrokeWidth,
             }),
-        })
-    ];
+        }),
+    ]), [
+        config.baseStrokeColor,
+        config.mainStrokeColor,
+        config.newBaseStrokeWidth,
+        config.newHLStrokeWidth,
+    ]);
 
-    const defaultStyles = [
+    const defaultStyles = useMemo(() => ([
         new Style({
             stroke: new Stroke({
                 color: config.mainStrokeColor,
@@ -41,10 +46,15 @@ export default function ServerCourses(props: any) {
                 color: config.baseStrokeColor,
                 width: config.defBaseStrokeWidth,
             }),
-        })
-    ]
+        }),
+    ]), [
+        config.baseStrokeColor,
+        config.defBaseStrokeWidth,
+        config.defHLStrokeWidth,
+        config.mainStrokeColor,
+    ]);
 
-    const myStyles = [
+    const myStyles = useMemo(() => ([
         new Style({
             stroke: new Stroke({
                 color: config.myStrokeColor,
@@ -57,10 +67,15 @@ export default function ServerCourses(props: any) {
                 color: config.baseStrokeColor,
                 width: config.defBaseStrokeWidth,
             }),
-        })
-    ]
+        }),
+    ]), [
+        config.baseStrokeColor,
+        config.defBaseStrokeWidth,
+        config.defHLStrokeWidth,
+        config.myStrokeColor,
+    ]);
 
-    const myStylesHighlight = [
+    const myStylesHighlight = useMemo(() => ([
         new Style({
             stroke: new Stroke({
                 color: config.myHlStrokeColor,
@@ -73,16 +88,21 @@ export default function ServerCourses(props: any) {
                 color: config.baseStrokeColor,
                 width: config.newBaseStrokeWidth,
             }),
-        })
-    ]
+        }),
+    ]), [
+        config.baseStrokeColor,
+        config.myHlStrokeColor,
+        config.newBaseStrokeWidth,
+        config.newHLStrokeWidth,
+    ]);
 
-    const { data: session } = useSession();
+    const { data: session } = authClient.useSession();
 
     useEffect(() => {
         const myArr: Course[] = [];
         const otherArr: Course[] = [];
 
-        if (session === null) {
+        if (!session) {
             setOtherCourses(serverCourses);
         } else {
             serverCourses.forEach((course: any) => {
@@ -96,7 +116,19 @@ export default function ServerCourses(props: any) {
             setMyCourses(myArr);
             setOtherCourses(otherArr);
         }
-    }, [serverCourses]);
+    }, [serverCourses, session]);
+
+    const handleMyPointerLeave = useCallback((e: any) => {
+        setSelectedFeature(null);
+        e.target.setStyle(myStyles);
+        e.map.getTargetElement().style.cursor = 'auto'
+    }, [myStyles]);
+
+    const handleOtherPointerLeave = useCallback((e: any) => {
+        setSelectedFeature(null);
+        e.target.setStyle(defaultStyles);
+        e.map.getTargetElement().style.cursor = 'auto'
+    }, [defaultStyles]);
 
     return (
         <>
@@ -108,13 +140,7 @@ export default function ServerCourses(props: any) {
                     e.target.setStyle(myStylesHighlight);
                     e.map.getTargetElement().style.cursor = 'pointer'
                 }}
-                onPointerLeave={
-                    useCallback((e: any) => {
-                        setSelectedFeature(null);
-                        e.target.setStyle(myStyles);
-                        e.map.getTargetElement().style.cursor = 'auto'
-                    }, [serverCourses, selectedFeature])
-                }
+                onPointerLeave={handleMyPointerLeave}
                 style={myStyles}
             >
                 {
@@ -146,13 +172,7 @@ export default function ServerCourses(props: any) {
                     e.target.setStyle(selectStyles);
                     e.map.getTargetElement().style.cursor = 'pointer'
                 }}
-                onPointerLeave={
-                    useCallback((e: any) => {
-                        setSelectedFeature(null);
-                        e.target.setStyle(defaultStyles);
-                        e.map.getTargetElement().style.cursor = 'auto'
-                    }, [serverCourses, selectedFeature])
-                }
+                onPointerLeave={handleOtherPointerLeave}
                 style={defaultStyles}
             >
                 {

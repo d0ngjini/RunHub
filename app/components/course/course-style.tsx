@@ -6,6 +6,15 @@ import {Geometry} from "ol/geom";
 export default function CourseStyle(props: any) {
     const { towns, currentStyles, config } = props;
 
+    const {
+        baseStrokeColor,
+        defBaseStrokeWidth,
+        defHLStrokeWidth,
+        hlStrokeColor,
+        newBaseStrokeWidth,
+        newHLStrokeWidth,
+    } = config;
+
     return (
         <>
 
@@ -15,14 +24,14 @@ export default function CourseStyle(props: any) {
                     return (
                         <>
                             <RStyle zIndex={1}>
-                                <RStroke color={config.hlStrokeColor} width={config.defHLStrokeWidth}/>
+                                <RStroke color={hlStrokeColor} width={defHLStrokeWidth}/>
                             </RStyle>
                             <RStyle zIndex={0}>
-                                <RStroke color={config.baseStrokeColor} width={config.defBaseStrokeWidth}/>
+                                <RStroke color={baseStrokeColor} width={defBaseStrokeWidth}/>
                             </RStyle>
                         </>
                     )
-                }, [])}
+                }, [baseStrokeColor, defBaseStrokeWidth, defHLStrokeWidth, hlStrokeColor])}
             />
 
             <RStyleArray
@@ -31,14 +40,14 @@ export default function CourseStyle(props: any) {
                     return (
                         <>
                             <RStyle zIndex={1}>
-                                <RStroke color={config.hlStrokeColor} width={config.newHLStrokeWidth}/>
+                                <RStroke color={hlStrokeColor} width={newHLStrokeWidth}/>
                             </RStyle>
                             <RStyle zIndex={0}>
-                                <RStroke color={config.newBaseStrokeWidth} width={config.newBaseStrokeWidth}/>
+                                <RStroke color={newBaseStrokeWidth} width={newBaseStrokeWidth}/>
                             </RStyle>
                         </>
                     )
-                }, [])}
+                }, [hlStrokeColor, newBaseStrokeWidth, newHLStrokeWidth])}
             />
         </>
     )

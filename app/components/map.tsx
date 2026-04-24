@@ -14,8 +14,6 @@ import { Geometry } from "ol/geom";
 import { useEffect, useMemo, useState } from "react";
 import { mouseOnly, never, shiftKeyOnly, singleClick, touchOnly } from "ol/events/condition";
 
-import { Button, useDisclosure } from "@nextui-org/react";
-
 import { RFill, RStroke, RStyle, useRStyle } from "rlayers/style";
 import { Feature } from "ol";
 import { SignInButton } from "@/app/components/sign-in";
@@ -23,17 +21,15 @@ import CreateCourse from "@/app/components/course/create-course";
 import CourseCard from "@/app/components/course/course-card";
 import CourseStyle from "./course/course-style";
 import CourseEvent from "@/app/components/course/course-event";
-import { Course } from "@prisma/client";
+import type { Course } from "@/lib/domain-types";
 import ServerCourses from "@/app/components/course/server-courses";
 import dayjs from "dayjs";
-import { Simulate } from "react-dom/test-utils";
-import pointerDown = Simulate.pointerDown;
 // import Geolocation from "@/app/components/geolocation";
 import { MVT } from "ol/format";
 import useSWR from "swr";
 
 export default function Map() {
-    const { isOpen, onOpen, onClose } = useDisclosure();
+    const [isCreateCourseOpen, setCreateCourseOpen] = useState(false);
 
     const [isDrawState, setDrawState] = useState<boolean>(false);
     const [current, setCurrent] = useState(
@@ -114,8 +110,14 @@ export default function Map() {
             <CourseCard isCardHidden={isCardHidden} cardData={cardData} setCardData={setCardData} setCardHidden={setCardHidden} getSingleCourse={getSingleCourse} />
             <CourseStyle towns={towns} currentStyles={currentStyles} config={featureConfig} />
 
-            <RMap className='example-map w-screen h-screen'
-                initial={{ center: fromLonLat([126.734086, 37.715133]), zoom: 12 }}>
+            <div
+                className="fixed inset-0 w-screen"
+                style={{ height: "100dvh", width: "100vw" }}
+            >
+                <RMap
+                    className="w-full h-full"
+                    initial={{ center: fromLonLat([126.734086, 37.715133]), zoom: 12 }}
+                >
 
                 <RLayerTileWebGL
                     properties={{ label: "Transport" }}
@@ -151,16 +153,17 @@ export default function Map() {
                                     flatCoordinates: e.feature.getGeometry().getCoordinates(),
                                     extent: e.feature.getGeometry().getExtent(),
                                 });
-                                onOpen();
+                                setCreateCourseOpen(true);
                             }}
                         />
                     </RLayerVector>
                 }
-            </RMap>
+                </RMap>
+            </div>
             <CreateCourse drawnCourse={drawnCourse}
                 setDrawnCourse={setDrawnCourse}
-                isOpen={isOpen}
-                onClose={onClose}
+                isOpen={isCreateCourseOpen}
+                onClose={() => setCreateCourseOpen(false)}
                 setDrawState={setDrawState}
             />
         </>

@@ -1,25 +1,33 @@
 "use client"
 
-import { signIn, signOut, useSession } from "next-auth/react"
-import { Button, DropdownItem, DropdownMenu, Image } from "@nextui-org/react";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
 import Avatar from 'boring-avatars';
-import { Dropdown, DropdownTrigger } from "@nextui-org/dropdown";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { RiArrowDropDownFill, RiLogoutBoxLine, RiMarkPenLine } from "react-icons/ri";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import dayjs from "dayjs";
 import duration from "dayjs/plugin/duration";
 
 dayjs.extend(duration);
 
 export function SignInButton(props: any) {
-    const { data: session } = useSession();
+    const { data: session } = authClient.useSession();
     const { setDrawState, isDrawState } = props;
     const [timeLeft, setTimeLeft] = useState<number>();
 
     // 세션 만료 시간을 계산하여 남은 시간을 업데이트하는 함수
     const calculateTimeLeft = useCallback(() => {
-        if (session?.expires) {
-            const expirationTime = dayjs(session.expires);
+        const expiresAt = session?.session?.expiresAt;
+        if (expiresAt) {
+            const expirationTime = dayjs(expiresAt);
             const currentTime = dayjs();
             const tl = expirationTime.diff(currentTime); // 밀리초로 남은 시간 계산
             setTimeLeft(tl);
@@ -66,7 +74,7 @@ export function SignInButton(props: any) {
             label: "로그아웃",
             icon: <RiLogoutBoxLine />,
             onClick: () => {
-                signOut();
+                authClient.signOut();
             },
         }
     ];
@@ -75,12 +83,11 @@ export function SignInButton(props: any) {
         return (
             <>
                 <div className="absolute top-2 right-2">
-                    <Dropdown>
-                        <DropdownTrigger>
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
                             <Button
-                                variant="solid"
-                                color="default"
-                                className="bg-white bg-opacity-90 gap-1"
+                                variant="outline"
+                                className="bg-background/90 gap-1"
                             >
                                 <Avatar
                                     size={16}
@@ -93,23 +100,22 @@ export function SignInButton(props: any) {
                                 </span>
                                 <RiArrowDropDownFill />
                             </Button>
-                        </DropdownTrigger>
-                        <DropdownMenu aria-label="Dynamic Actions" items={items} disabledKeys={["time"]}>
-                            {(item) => (
-                                <DropdownItem
-                                    key={item.key}
-                                    color={item.key === "delete" ? "danger" : "default"}
-                                    className={item.key === "delete" ? "text-danger" : "" + " flex flex-row select-none"}
-                                    onPress={item.onClick}
-                                >
-                                    <div className="flex gap-2 items-center">
-                                        {item.icon}
-                                        {item.label}
-                                    </div>
-                                </DropdownItem>
-                            )}
-                        </DropdownMenu>
-                    </Dropdown>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-56">
+                            <DropdownMenuLabel className="text-xs text-default-500">
+                                {items[0]?.label}
+                            </DropdownMenuLabel>
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onSelect={() => items[1]?.onClick?.()} className="gap-2">
+                                {items[1]?.icon}
+                                <span>{items[1]?.label}</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onSelect={() => items[2]?.onClick?.()} className="gap-2">
+                                {items[2]?.icon}
+                                <span>{items[2]?.label}</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
                 </div>
             </>
         );
@@ -117,9 +123,9 @@ export function SignInButton(props: any) {
 
     return (
         <>
-            <Button className={"absolute z-20 top-2 right-2 flex justify-between items-center gap-2 bg-white p-2 rounded shadow"}
+            <Button className={"absolute z-20 top-2 right-2 flex justify-between items-center gap-2 bg-background p-2 rounded-lg shadow"}
                 onClick={(e: any) => {
-                    signIn()
+                    authClient.signIn.social({ provider: "kakao" })
                 }}>
                 <Avatar
                     size={24}

@@ -1,8 +1,10 @@
 import type {Metadata, Viewport} from "next";
-import {Inter, Noto_Sans_KR} from "next/font/google";
+import {Inter, Noto_Sans_KR, Geist } from "next/font/google";
 import "./globals.css";
 import React from "react";
-import {SessionProvider} from "next-auth/react"
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 const inter = Inter({subsets: ["latin"]});
 const NotoSansKR = Noto_Sans_KR({
@@ -35,11 +37,9 @@ export default function RootLayout({
 }>) {
     return (
 
-            <html lang="en">
-                <body className={NotoSansKR.className}>
-                    <SessionProvider>
-                        {children}
-                    </SessionProvider>
+            <html lang="en" className={cn("font-sans", geist.variable)}>
+                <body className={cn(NotoSansKR.className, "min-h-dvh overflow-hidden")}>
+                    {children}
                 </body>
             </html>
     );

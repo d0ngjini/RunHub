@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { Button, Image, Textarea } from "@nextui-org/react";
-import { signIn, useSession } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import { authClient } from "@/lib/auth-client";
 import { RiLoginBoxLine } from "react-icons/ri";
 import toast from "react-hot-toast";
 import { useSingleCourse } from "@/lib/fetcher/useSingleCourse";
@@ -56,18 +57,13 @@ export default function ReviewInput(props: any) {
         }
     }
 
-    const onSignHandler = (e: any) => {
-        e.preventDefault();
-        signIn();
-    }
+    const { data: session, isPending } = authClient.useSession();
 
-    let session = useSession();
-
-    if (session.status === 'unauthenticated') {
+    if (!isPending && !session) {
         return <>
-            <div className="w-full flex gap-2 items-center" onSubmit={onSignHandler}>
+            <div className="w-full flex gap-2 items-center">
                 <a href="#" className="flex gap-2 items-center text-sm font-bold underline underline-offset-4" onClick={() => {
-                    signIn()
+                    authClient.signIn.social({ provider: "kakao" })
                 }}><RiLoginBoxLine />리뷰를 남기려면 로그인이 필요합니다.</a>
             </div>
         </>
@@ -76,24 +72,21 @@ export default function ReviewInput(props: any) {
     return (
         <form className="w-full flex gap-2 items-center" onSubmit={onSubmitHandler}>
             <Textarea
-                variant="bordered"
-                maxRows={2}
                 placeholder="매너 리뷰 부탁드려요. 😉"
                 value={reviewVal}
-                onValueChange={setReviewVal}
-                isRequired={true}
-                isDisabled={isSubmitting}
+                onChange={(e) => setReviewVal(e.target.value)}
+                required
+                disabled={isSubmitting}
+                rows={2}
             />
             <Button
                 className="absolute right-6"
-                color="primary"
                 type={"submit"}
-                variant={"faded"}
-                isIconOnly
-                isLoading={isSubmitting}
-                isDisabled={isSubmitting}
+                variant={"outline"}
+                size="icon"
+                disabled={isSubmitting}
             >
-                {!isSubmitting && <Image width={"24"} src="https://www.svgrepo.com/show/532154/check.svg" />}
+                {isSubmitting ? "..." : "✓"}
             </Button>
         </form>
     );

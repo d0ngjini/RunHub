@@ -1,16 +1,17 @@
-import { Card, CardBody, CardHeader } from "@nextui-org/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import ReviewList from "@/app/components/reviews/review-list";
 import ReviewInput from "@/app/components/reviews/review-input";
-import { Button, card, Divider, Spinner } from "@nextui-org/react";
-import Image from 'next/image';
+import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
+import { Spinner } from "@/components/ui/spinner";
 import { RiCheckLine, RiCloseFill, RiCloseLine, RiDeleteBin4Line, RiHeart3Line, RiThumbUpLine } from "react-icons/ri";
-import { useSession } from "next-auth/react";
+import { authClient } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { useSingleCourse } from "@/lib/fetcher/useSingleCourse";
 import React from "react";
 
 export default function CourseCard(props: any) {
-    const { data: session } = useSession();
+    const { data: session } = authClient.useSession();
     const { isCardHidden, cardData, setCardData, setCardHidden, getSingleCourse } = props;
 
     // useSingleCourse 훅을 사용하여 데이터 동기화
@@ -21,20 +22,24 @@ export default function CourseCard(props: any) {
 
     // SWR에서 가져온 데이터가 있으면 cardData 업데이트
     React.useEffect(() => {
-        if (course && cardData?.id === course.id) {
-            setCardData({
-                ...cardData,
+        if (!course) return;
+
+        setCardData((prev: any) => {
+            if (!prev || prev.id !== course.id) return prev;
+            return {
+                ...prev,
                 ...course,
                 courseComments: course.courseComments || [],
                 isLiked: course.isLiked || false,
                 likedCount: course.likedCount || 0,
-            });
-        }
-    }, [course, cardData?.id]);
+            };
+        });
+    }, [course, setCardData]);
 
     const addCourseLike = async () => {
         if (!session) {
             toast.error('리뷰를 추천하기 위해 로그인이 필요합니다.');
+            authClient.signIn.social({ provider: "kakao" });
             return;
         }
 
@@ -42,7 +47,7 @@ export default function CourseCard(props: any) {
             method: 'POST',
             body: JSON.stringify({
                 courseId: cardData.id,
-                userId: session.user?.id,
+                    userId: session.user?.id,
                 isLiked: !cardData.isLiked,
             }),
         }).then(res => {
@@ -71,6 +76,7 @@ export default function CourseCard(props: any) {
 
         if (!session) {
             toast.error('로그인 정보가 없습니다.');
+            authClient.signIn.social({ provider: "kakao" });
             return;
         }
 
@@ -121,16 +127,16 @@ export default function CourseCard(props: any) {
                 <Card className="absolute z-40 w-full md:w-96 py-1 bottom-0 mb-0 md:mb-4 rounded-none md:rounded-xl right-1/2 translate-x-1/2">
                     {
                         session && session.user?.id === safeCardData.userId &&
-                        <Button size="sm" color="danger" className="absolute z-20 right-10 top-1 rounded-2xl opacity-60" onClick={() => {
+                        <Button size="icon-sm" variant="destructive" className="absolute z-20 right-10 top-1 rounded-2xl opacity-80" onClick={() => {
                             void deleteCourse();
-                        }} isIconOnly>
+                        }}>
                             <RiDeleteBin4Line size={16} />
                         </Button>
                     }
 
-                    <Button size="sm" className="absolute z-20 right-1 top-1 rounded-2xl bg-gray-50" onClick={() => {
+                    <Button size="icon-sm" variant="outline" className="absolute z-20 right-1 top-1 rounded-2xl bg-background" onClick={() => {
                         setCardHidden(!isCardHidden)
-                    }} isIconOnly>
+                    }}>
                         <RiCloseLine size={16} />
                     </Button>
                     <CardHeader className="flex-col items-start">
@@ -143,11 +149,11 @@ export default function CourseCard(props: any) {
                             {
                                 isLoading
                                     ?
-                                    <Button size="sm" variant="bordered" color="default" className="text-default">
-                                        <Spinner size="sm" color="default" /> 로딩 중
+                                    <Button size="sm" variant="outline" className="text-default gap-2">
+                                        <Spinner className="size-4" /> 로딩 중
                                     </Button>
                                     :
-                                    <Button size="sm" variant="bordered" color={safeCardData.isLiked ? 'success' : 'primary'} className="small font-bold" title="좋아요" onClick={() => {
+                                    <Button size="sm" variant={safeCardData.isLiked ? "secondary" : "outline"} className="small font-bold gap-1.5" title="좋아요" onClick={() => {
                                         void addCourseLike()
                                     }}>
                                         {
@@ -164,16 +170,16 @@ export default function CourseCard(props: any) {
                             }
                         </div>
                     </CardHeader>
-                    <Divider />
-                    <div className="px-3 pt-3 text-sm font-semibold">리뷰 <span className="text-xs text-gray-500">({safeCardData.courseComments.length})</span></div>
-                    <CardBody className="items-center flex-col gap-3">
+                    <Separator />
+                    <div className="px-3 pt-3 text-sm font-semibold">리뷰 <span className="text-xs text-default-500">({safeCardData.courseComments.length})</span></div>
+                    <CardContent className="items-center flex-col gap-3">
                         <ReviewList data={safeCardData.courseComments} />
                         <ReviewInput
                             courseId={safeCardData.id}
                             getSingleCourse={getSingleCourse}
                             onReviewAdded={handleReviewAdded}
                         />
-                    </CardBody>
+                    </CardContent>
                 </Card>
             }
         </>

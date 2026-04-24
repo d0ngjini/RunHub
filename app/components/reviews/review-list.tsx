@@ -1,4 +1,5 @@
-import { Chip, Divider } from "@nextui-org/react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import Avatar from "boring-avatars";
 import dayjs from "dayjs";
 
@@ -15,26 +16,22 @@ export default function ReviewList(props: any) {
                             <div className="flex flex-col gap-2 justify-between text-sm">
                                 <div className="max-w-64 break-words">{d.comment}</div>
                                 <div className="flex items-center gap-1">
-                                    <Chip
-                                        variant="flat"
-                                        avatar={
-                                            <Avatar
-                                                size={20}
-                                                name={d.User?.name || '익명'}
-                                                variant="beam"
-                                                colors={['#fcfcfc', '#ff5400', '#6c6c6c', '#7cff00', '#DF8615']}
-                                            />
-                                        }
-                                    >
+                                    <Badge variant="secondary" className="gap-2">
+                                        <Avatar
+                                            size={20}
+                                            name={d.User?.name || '익명'}
+                                            variant="beam"
+                                            colors={['#fcfcfc', '#ff5400', '#6c6c6c', '#7cff00', '#DF8615']}
+                                        />
                                         {d.User?.name || '익명'}
-                                    </Chip>
+                                    </Badge>
                                     <span
-                                        className="before:content-['·_'] text-gray-500 text-xs"
+                                        className="before:content-['·_'] text-default-500 text-xs"
                                     >{dayjs(d.createdAt).format('YYYY-MM-DD')}
                                     </span>
                                 </div>
                             </div>
-                            <Divider className="m-0" />
+                            <Separator />
                         </div>
                     ))
                 }

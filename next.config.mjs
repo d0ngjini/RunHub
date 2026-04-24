@@ -1,7 +1,12 @@
 /** @type {import('next').NextConfig} */
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
 const nextConfig = {
     reactStrictMode: false,
-    outputFileTracingRoot: new URL('.', import.meta.url).pathname,
+    outputFileTracingRoot: __dirname,
     // compiler: {
     //     removeConsole: {
     //         exclude: ['error', 'warning']
