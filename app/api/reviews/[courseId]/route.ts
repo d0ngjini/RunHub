@@ -1,6 +1,10 @@
-import prisma from "@/app/prisma/db";
 import {NextRequest} from "next/server";
-import {auth} from "@/app/auth";
+import { getSession } from "@/lib/auth-server";
+import { db } from "@/lib/db";
+import { courseComments } from "@/lib/db/schema";
+import { randomUUID } from "crypto";
+
+export const runtime = "nodejs";
 
 export async function POST(
   request: NextRequest,
@@ -9,22 +13,21 @@ export async function POST(
     const body = await request.json();
     const { courseId } = await params;
 
-    const session = await auth();
+    const session = await getSession();
 
-    if (session === null || session.user?.id === undefined) {
+    if (!session?.user?.id) {
         return Response.json({
             status: 401,
             message: 'no such session.',
         });
     }
 
-    await prisma.courseComment.create({
-        data: {
-            courseId: courseId,
-            authorId: session.user.id,
-            comment: body.value,
-            createdAt: new Date().toISOString(),
-        }
+    await db.insert(courseComments).values({
+      id: randomUUID(),
+      courseId,
+      authorId: session.user.id,
+      comment: body.value,
+      createdAt: new Date(),
     });
 
     return Response.json({
