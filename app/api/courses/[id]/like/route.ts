@@ -1,15 +1,17 @@
 import {auth} from "@/app/auth";
 import prisma from "@/app/prisma/db";
 
-export async function GET(request: Request,  { params } : {
-    params: Record<string, any>;
-}) {
+export async function GET(
+  request: Request,
+  { params }: { params: Promise<{ id: string }> },
+) {
+    const { id } = await params;
     const count = await prisma.courseLike.aggregate({
         _count: {
             isLike: true
         },
         where: {
-            courseId: params.id,
+            courseId: id,
             isLike: true,
         },
     });

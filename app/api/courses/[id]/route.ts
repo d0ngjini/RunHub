@@ -4,14 +4,14 @@ import { Course } from "@prisma/client";
 import prisma from "@/app/prisma/db";
 import { auth } from "@/app/auth";
 
-export async function GET(request: NextRequest, { params }: {
-    params: {
-        id: string
-    }
-}) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+    const { id } = await params;
     let course = await prisma.course.findUnique({
         where: {
-            id: params.id,
+            id,
             // name: param.name,
         },
         include: {
@@ -55,7 +55,7 @@ export async function GET(request: NextRequest, { params }: {
     if (session !== null) {
         const userLiked = await prisma.courseLike.findMany({
             where: {
-                courseId: params.id,
+                courseId: id,
                 userId: session.user?.id,
             },
         });
@@ -93,11 +93,11 @@ export async function GET(request: NextRequest, { params }: {
     });
 }
 
-export async function DELETE(request: NextRequest, { params }: {
-    params: {
-        id: string
-    }
-}) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
+    const { id } = await params;
     const session = await auth();
 
     if (session === null || !session.user?.id) {
@@ -110,7 +110,7 @@ export async function DELETE(request: NextRequest, { params }: {
     const result = await prisma.course.delete({
         where: {
             userId: session.user?.id,
-            id: params.id,
+            id,
         }
     });
 

@@ -2,11 +2,12 @@ import prisma from "@/app/prisma/db";
 import {NextRequest} from "next/server";
 import {auth} from "@/app/auth";
 
-export async function POST(request: NextRequest, { params } : {
-    params: Record<string, any>;
-}) {
+export async function POST(
+  request: NextRequest,
+  { params }: { params: Promise<{ courseId: string }> },
+) {
     const body = await request.json();
-    const { courseId } = params;
+    const { courseId } = await params;
 
     const session = await auth();
 
