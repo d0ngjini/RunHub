@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     reactStrictMode: false,
+    outputFileTracingRoot: new URL('.', import.meta.url).pathname,
     // compiler: {
     //     removeConsole: {
     //         exclude: ['error', 'warning']
