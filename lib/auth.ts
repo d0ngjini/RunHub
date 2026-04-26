@@ -11,6 +11,14 @@ export const auth = betterAuth({
     provider: "pg",
     schema,
   }),
+  user: {
+    additionalFields: {
+      bio: {
+        type: "string",
+        required: false,
+      },
+    },
+  },
   socialProviders: {
     kakao: {
       clientId: process.env.KAKAO_CLIENT_ID as string,
