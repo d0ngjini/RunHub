@@ -79,7 +79,7 @@ function DockItem({
 /** 맥OS 독 느낌 — 가로 pill, 아이콘만, blur 글라스 */
 export function MapFloatingDock({ isDrawActive, onCourseCreate }: MapFloatingDockProps) {
   const { active, openPanel } = useExplorePanels();
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending: sessionPending } = authClient.useSession();
   const { openAuth } = useAuthUi();
 
   return (
@@ -139,6 +139,11 @@ export function MapFloatingDock({ isDrawActive, onCourseCreate }: MapFloatingDoc
             label="내 정보"
             tooltip="프로필·내 정보·설정"
             onClick={() => {
+              // 세션 페치 전에는 user가 비어 있어 로그인 창이 잘못 뜸(OAuth 직후 등)
+              if (sessionPending) {
+                openPanel("me");
+                return;
+              }
               if (session?.user) {
                 openPanel("me");
               } else {

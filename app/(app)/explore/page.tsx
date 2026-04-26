@@ -6,12 +6,15 @@ import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 
+import { authClient } from "@/lib/auth-client";
+
 const DynamicMap = dynamic(() => import("@/app/components/map"), { ssr: false });
 
 /** 카카오 OAuth 후 돌아왔을 때 쿼리로 결과 알림 (전체 리다이렉트라 클라이언트 상태가 리셋됨) */
 function LoginReturnFeedback() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const { refetch: refetchSession } = authClient.useSession();
 
   useEffect(() => {
     const login = searchParams.get("login");
@@ -19,6 +22,7 @@ function LoginReturnFeedback() {
 
     if (login === "success") {
       toast.success("로그인되었습니다.", { id: "oauth-login-result" });
+      void refetchSession();
     } else {
       toast.error("로그인에 실패했습니다.", {
         id: "oauth-login-result",
@@ -30,7 +34,7 @@ function LoginReturnFeedback() {
     params.delete("login");
     const qs = params.toString();
     router.replace(qs ? `/explore?${qs}` : "/explore", { scroll: false });
-  }, [router, searchParams]);
+  }, [router, searchParams, refetchSession]);
 
   return null;
 }
