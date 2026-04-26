@@ -3,6 +3,7 @@ import {Inter, Noto_Sans_KR, Geist } from "next/font/google";
 import "./globals.css";
 import React from "react";
 import { cn } from "@/lib/utils";
+import { Providers } from "@/components/providers";
 
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
@@ -37,9 +38,13 @@ export default function RootLayout({
 }>) {
     return (
 
-            <html lang="en" className={cn("font-sans", geist.variable)}>
-                <body className={cn(NotoSansKR.className, "min-h-dvh overflow-hidden")}>
-                    {children}
+            <html
+                lang="ko"
+                className={cn("dark font-sans h-dvh min-h-0", geist.variable)}
+                suppressHydrationWarning
+            >
+                <body className={cn(NotoSansKR.className, "h-dvh min-h-0 overflow-hidden bg-background text-foreground")}>
+                    <Providers>{children}</Providers>
                 </body>
             </html>
     );
