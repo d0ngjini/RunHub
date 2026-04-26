@@ -5,9 +5,11 @@ import { Camera, LogOut, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
 import useSWR from "swr";
 
+import { useRouter } from "next/navigation";
 import { authClient } from "@/lib/auth-client";
 import { useExplorePanels } from "@/components/app/explore-panels-context";
 import { useAuthUi } from "@/components/auth/auth-store";
+import { signOutWithFeedback } from "@/components/auth/sign-out-feedback";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,8 +22,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 type MeJson = {
   id: string;
@@ -46,9 +48,10 @@ function initialsFromName(name: string) {
 const MAX_FILE_BYTES = 1_200_000;
 
 export function MePanel() {
+  const router = useRouter();
   const { data: session, isPending: sessionPending } = authClient.useSession();
   const { openAuth } = useAuthUi();
-  const { meTab, setMeTab, closePanel } = useExplorePanels();
+  const { closePanel } = useExplorePanels();
 
   const { data: me, isLoading: meLoading, mutate: mutateMe } = useSWR<MeJson>(
     session?.user ? "/api/me" : null,
@@ -144,9 +147,13 @@ export function MePanel() {
         return;
       }
       setWithdrawOpen(false);
-      closePanel();
-      await authClient.signOut();
-      toast.success("회원에서 탈퇴했습니다.");
+      await signOutWithFeedback({
+        successMessage: "회원에서 탈퇴했습니다.",
+        onAfterSignOut: async () => {
+          closePanel();
+          router.refresh();
+        },
+      });
     } finally {
       setWithdrawing(false);
     }
@@ -154,7 +161,7 @@ export function MePanel() {
 
   if (sessionPending) {
     return (
-      <div className="flex max-h-[min(70dvh,560px)] flex-col gap-4 overflow-y-auto pr-0.5">
+      <div className="flex w-full flex-col gap-4">
         <div className="flex items-center gap-3">
           <Skeleton className="size-20 shrink-0 rounded-full" />
           <div className="flex min-w-0 flex-1 flex-col gap-2">
@@ -169,7 +176,7 @@ export function MePanel() {
 
   if (!session?.user) {
     return (
-      <div className="flex max-h-[min(70dvh,560px)] flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex w-full flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <ShieldCheck className="size-4 shrink-0" aria-hidden />
           로그인하면 프로필을 편집할 수 있습니다.
@@ -189,135 +196,145 @@ export function MePanel() {
     imageShouldClear;
 
   return (
-    <div className="flex max-h-[min(70dvh,560px)] flex-col gap-0 overflow-y-auto pr-0.5">
-      {!meReady ? (
-        <div className="flex flex-col gap-4">
-          <div className="flex items-center gap-3">
-            <Skeleton className="size-20 shrink-0 rounded-full" />
-            <div className="flex min-w-0 flex-1 flex-col gap-2">
-              <Skeleton className="h-5 w-40" />
-              <Skeleton className="h-4 w-56" />
+    <>
+      <div className="flex w-full flex-col gap-0">
+        {!meReady ? (
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center gap-3">
+              <Skeleton className="size-20 shrink-0 rounded-full" />
+              <div className="flex min-w-0 flex-1 flex-col gap-2">
+                <Skeleton className="h-5 w-40" />
+                <Skeleton className="h-4 w-56" />
+              </div>
             </div>
+            <Skeleton className="h-24 w-full" />
           </div>
-          <Skeleton className="h-24 w-full" />
-        </div>
-      ) : (
-        <Tabs
-          value={meTab}
-          onValueChange={(v) => setMeTab(v as "profile" | "account")}
-          className="flex w-full flex-col gap-4"
-        >
-          <TabsList className="grid w-full grid-cols-2" variant="line">
-            <TabsTrigger value="profile">프로필</TabsTrigger>
-            <TabsTrigger value="account">계정</TabsTrigger>
-          </TabsList>
-          <TabsContent value="profile" className="mt-0 flex min-h-0 flex-col gap-5">
-            <div className="flex flex-col items-center gap-3 sm:flex-row sm:items-start">
-              <div className="relative">
-                <Avatar className="!size-20">
-                  <AvatarImage
-                    src={displayImage ?? undefined}
-                    alt=""
-                    className="object-cover"
-                  />
-                  <AvatarFallback className="text-base font-medium">{initialsFromName(label)}</AvatarFallback>
-                </Avatar>
-                <label className="absolute -right-0.5 -bottom-0.5 flex size-8 cursor-pointer items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors hover:bg-muted">
-                  <Camera className="size-3.5" aria-hidden />
-                  <input
-                    type="file"
-                    accept="image/jpeg,image/png,image/gif,image/webp"
-                    className="sr-only"
-                    onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
-                  />
-                  <span className="sr-only">프로필 사진 변경</span>
-                </label>
-              </div>
-              <div className="flex w-full min-w-0 flex-1 flex-col gap-2 sm:pt-0.5">
-                <div className="space-y-1.5">
-                  <Label htmlFor="me-name">표시 이름</Label>
-                  <Input
-                    id="me-name"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    maxLength={64}
-                    autoComplete="name"
-                    placeholder="닉네임"
-                  />
+        ) : (
+          <div className="flex w-full flex-col gap-8">
+            <section className="flex flex-col gap-1" aria-labelledby="me-profile-heading">
+              <h3 id="me-profile-heading" className="text-sm font-semibold text-foreground">
+                프로필
+              </h3>
+              <p className="text-xs text-muted-foreground">이름·사진·소개를 수정할 수 있습니다.</p>
+              <div className="mt-4 flex flex-col items-center gap-4 sm:flex-row sm:items-start">
+                <div className="relative shrink-0">
+                  <Avatar className="!size-20">
+                    <AvatarImage
+                      src={displayImage ?? undefined}
+                      alt=""
+                      className="object-cover"
+                    />
+                    <AvatarFallback className="text-base font-medium">{initialsFromName(label)}</AvatarFallback>
+                  </Avatar>
+                  <label className="absolute -right-0.5 -bottom-0.5 flex size-8 cursor-pointer items-center justify-center rounded-full border border-border bg-background shadow-sm transition-colors hover:bg-muted">
+                    <Camera className="size-3.5" aria-hidden />
+                    <input
+                      type="file"
+                      accept="image/jpeg,image/png,image/gif,image/webp"
+                      className="sr-only"
+                      onChange={(e) => onPickFile(e.target.files?.[0] ?? null)}
+                    />
+                    <span className="sr-only">프로필 사진 변경</span>
+                  </label>
                 </div>
-                {me?.email ? (
-                  <p className="text-xs text-muted-foreground">
-                    <span className="text-foreground/80">이메일</span> {me.email} (로그인 계정·변경 불가)
-                  </p>
-                ) : null}
-                <div className="space-y-1.5">
-                  <Label htmlFor="me-bio">내 소개</Label>
-                  <Textarea
-                    id="me-bio"
-                    value={bio}
-                    onChange={(e) => setBio(e.target.value)}
-                    maxLength={500}
-                    rows={4}
-                    placeholder="간단한 소개를 적어 주세요."
-                    className="min-h-24 resize-y"
-                  />
-                  <p className="text-xs text-muted-foreground tabular-nums">{bio.length} / 500</p>
-                </div>
-                <div className="flex flex-wrap items-center gap-2 pt-1">
-                  <Button type="button" size="sm" onClick={onSave} disabled={saving || !dirty}>
-                    {saving ? "저장 중…" : "저장"}
-                  </Button>
-                  {(me?.image || imageFileUrl) && !imageShouldClear ? (
-                    <Button
-                      type="button"
-                      size="sm"
-                      variant="ghost"
-                      className="text-muted-foreground"
-                      onClick={() => {
-                        setImageFileUrl(null);
-                        setImageShouldClear(true);
-                      }}
-                    >
-                      사진 제거
-                    </Button>
+                <div className="flex w-full min-w-0 flex-1 flex-col gap-3 sm:pt-0.5">
+                  <div className="space-y-1.5">
+                    <Label htmlFor="me-name">표시 이름</Label>
+                    <Input
+                      id="me-name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      maxLength={64}
+                      autoComplete="name"
+                      placeholder="닉네임"
+                    />
+                  </div>
+                  {me?.email ? (
+                    <p className="text-xs text-muted-foreground">
+                      <span className="text-foreground/80">이메일</span> {me.email} (로그인 계정·변경 불가)
+                    </p>
                   ) : null}
+                  <div className="space-y-1.5">
+                    <Label htmlFor="me-bio">내 소개</Label>
+                    <Textarea
+                      id="me-bio"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      maxLength={500}
+                      rows={5}
+                      placeholder="간단한 소개를 적어 주세요."
+                      className="min-h-[7.5rem] resize-y"
+                    />
+                    <p className="text-xs text-muted-foreground tabular-nums">{bio.length} / 500</p>
+                  </div>
+                  <div className="flex flex-wrap items-center gap-2 pt-1">
+                    <Button type="button" size="sm" onClick={onSave} disabled={saving || !dirty}>
+                      {saving ? "저장 중…" : "저장"}
+                    </Button>
+                    {(me?.image || imageFileUrl) && !imageShouldClear ? (
+                      <Button
+                        type="button"
+                        size="sm"
+                        variant="ghost"
+                        className="text-muted-foreground"
+                        onClick={() => {
+                          setImageFileUrl(null);
+                          setImageShouldClear(true);
+                        }}
+                      >
+                        사진 제거
+                      </Button>
+                    ) : null}
+                  </div>
                 </div>
               </div>
-            </div>
-          </TabsContent>
-          <TabsContent value="account" className="mt-0 flex flex-col gap-3">
-            <p className="text-sm text-muted-foreground">로그아웃하거나 이 서비스에서 계정을 삭제할 수 있습니다.</p>
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+            </section>
+
+            <Separator className="bg-border/80" />
+
+            <section className="flex flex-col gap-3" aria-labelledby="me-account-heading">
+              <div>
+                <h3 id="me-account-heading" className="text-sm font-semibold text-foreground">
+                  계정
+                </h3>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  로그아웃하거나 이 서비스에서 계정을 삭제할 수 있습니다.
+                </p>
+              </div>
               <Button
                 type="button"
                 variant="outline"
                 className="w-full gap-2 sm:w-auto"
                 onClick={() => {
-                  void authClient.signOut();
-                  closePanel();
+                  void signOutWithFeedback({
+                    onAfterSignOut: async () => {
+                      closePanel();
+                      router.refresh();
+                    },
+                  });
                 }}
               >
                 <LogOut className="size-4" aria-hidden />
                 로그아웃
               </Button>
-            </div>
-            <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-3">
-              <p className="text-sm text-foreground">회원 탈퇴</p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                등록한 코스·저장·알림 등 본인 데이터가 삭제됩니다. 되돌릴 수 없습니다.
-              </p>
-              <Button
-                type="button"
-                variant="destructive"
-                className="mt-3 w-full sm:w-auto"
-                onClick={() => setWithdrawOpen(true)}
-              >
-                회원 탈퇴
-              </Button>
-            </div>
-          </TabsContent>
-        </Tabs>
-      )}
+              <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-3">
+                <p className="text-sm text-foreground">회원 탈퇴</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  등록한 코스·저장·알림 등 본인 데이터가 삭제됩니다. 되돌릴 수 없습니다.
+                </p>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  className="mt-3 w-full sm:w-auto"
+                  onClick={() => setWithdrawOpen(true)}
+                >
+                  회원 탈퇴
+                </Button>
+              </div>
+            </section>
+          </div>
+        )}
+      </div>
 
       <Dialog open={withdrawOpen} onOpenChange={setWithdrawOpen}>
         <DialogContent showCloseButton>
@@ -337,6 +354,6 @@ export function MePanel() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </>
   );
 }

@@ -1,6 +1,8 @@
 "use client";
 
 import { authClient } from "@/lib/auth-client";
+import { signOutWithFeedback } from "@/components/auth/sign-out-feedback";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Avatar from "boring-avatars";
 import {
@@ -19,6 +21,7 @@ import duration from "dayjs/plugin/duration";
 dayjs.extend(duration);
 
 export function SignInButton(props: { setDrawState: (v: boolean) => void; isDrawState: boolean }) {
+  const router = useRouter();
   const { data: session } = authClient.useSession();
   const { setDrawState, isDrawState } = props;
   const [timeLeft, setTimeLeft] = useState<number>();
@@ -67,7 +70,11 @@ export function SignInButton(props: { setDrawState: (v: boolean) => void; isDraw
       label: "로그아웃",
       icon: <RiLogoutBoxLine />,
       onClick: () => {
-        authClient.signOut();
+        void signOutWithFeedback({
+          onAfterSignOut: () => {
+            router.refresh();
+          },
+        });
       },
     },
   ];

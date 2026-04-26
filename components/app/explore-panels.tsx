@@ -44,7 +44,7 @@ function SavedPanel({
   const { data, isLoading, mutate } = saved;
 
   return (
-    <div className="flex max-h-[min(70dvh,560px)] flex-col gap-0 overflow-y-auto pr-0.5">
+    <div className="flex w-full flex-col gap-0">
       {isLoading ? (
         <div className="flex flex-col gap-3">
           {[0, 1, 2].map((i) => (
@@ -115,7 +115,7 @@ function NotificationsPanel({ notif }: { notif: SwrBundle }) {
   const { data, isLoading, mutate } = notif;
 
   return (
-    <div className="flex max-h-[min(70dvh,560px)] flex-col gap-0 overflow-y-auto pr-0.5">
+    <div className="flex w-full flex-col gap-0">
       {isLoading ? (
         <div className="grid gap-2">
           {[0, 1, 2].map((i) => (
@@ -229,7 +229,8 @@ export function ExplorePanels() {
     <Dialog open={open} onOpenChange={(o) => !o && closePanel()}>
       <DialogContent
         className={cn(
-          "flex max-h-[min(88dvh,640px)] w-full max-w-md flex-col gap-0 overflow-hidden p-0 sm:max-w-md"
+          "flex max-h-[min(88dvh,640px)] w-full max-w-md flex-col gap-0 overflow-hidden p-0 sm:max-w-md",
+          active === "me" && "min-h-[min(56dvh,480px)]"
         )}
         showCloseButton
       >
@@ -300,7 +301,12 @@ export function ExplorePanels() {
                 </div>
               )}
             </DialogHeader>
-            <div className="min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-1 sm:px-5 sm:pt-2">
+            <div
+              className={cn(
+                "min-h-0 flex-1 overflow-y-auto px-4 pb-4 pt-1 sm:px-5 sm:pt-2",
+                active === "me" && "pb-5 pt-2 sm:pb-6 sm:pt-3"
+              )}
+            >
               {active && (
                 <PanelBody id={active} saved={savedBundle} notif={notifBundle} />
               )}

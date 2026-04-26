@@ -4,29 +4,19 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 
 export type ExplorePanelId = "saved" | "notifications" | "me";
 
-export type MeSubTab = "profile" | "account";
-
-type OpenOptions = { meTab?: MeSubTab };
-
 type ExplorePanelsValue = {
   active: ExplorePanelId | null;
-  meTab: MeSubTab;
-  openPanel: (id: ExplorePanelId, options?: OpenOptions) => void;
+  openPanel: (id: ExplorePanelId) => void;
   closePanel: () => void;
-  setMeTab: (t: MeSubTab) => void;
 };
 
 const ExplorePanelsContext = createContext<ExplorePanelsValue | null>(null);
 
 export function ExplorePanelsProvider({ children }: { children: React.ReactNode }) {
   const [active, setActive] = useState<ExplorePanelId | null>(null);
-  const [meTab, setMeTab] = useState<MeSubTab>("profile");
 
-  const openPanel = useCallback((id: ExplorePanelId, options?: OpenOptions) => {
+  const openPanel = useCallback((id: ExplorePanelId) => {
     setActive(id);
-    if (id === "me") {
-      setMeTab(options?.meTab ?? "profile");
-    }
   }, []);
 
   const closePanel = useCallback(() => {
@@ -34,8 +24,8 @@ export function ExplorePanelsProvider({ children }: { children: React.ReactNode 
   }, []);
 
   const value = useMemo(
-    () => ({ active, meTab, openPanel, closePanel, setMeTab }),
-    [active, meTab, openPanel, closePanel]
+    () => ({ active, openPanel, closePanel }),
+    [active, openPanel, closePanel]
   );
 
   return <ExplorePanelsContext.Provider value={value}>{children}</ExplorePanelsContext.Provider>;

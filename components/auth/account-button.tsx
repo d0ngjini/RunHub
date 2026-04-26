@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuthUi } from "@/components/auth/auth-store";
+import { signOutWithFeedback } from "@/components/auth/sign-out-feedback";
 import { useRouter } from "next/navigation";
 import { useExplorePanelsOptional } from "@/components/app/explore-panels-context";
 
@@ -73,29 +74,22 @@ export function AccountButton() {
         <DropdownMenuItem
           onSelect={() => {
             if (explore) {
-              explore.openPanel("me", { meTab: "profile" });
+              explore.openPanel("me");
             } else {
               router.push("/explore");
             }
           }}
         >
-          내정보
-        </DropdownMenuItem>
-        <DropdownMenuItem
-          onSelect={() => {
-            if (explore) {
-              explore.openPanel("me", { meTab: "account" });
-            } else {
-              router.push("/explore");
-            }
-          }}
-        >
-          계정
+          내 정보
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onSelect={() => {
-            authClient.signOut();
+            void signOutWithFeedback({
+              onAfterSignOut: () => {
+                router.refresh();
+              },
+            });
           }}
         >
           로그아웃

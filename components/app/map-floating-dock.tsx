@@ -13,6 +13,8 @@ import {
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { useExplorePanels } from "@/components/app/explore-panels-context";
+import { authClient } from "@/lib/auth-client";
+import { useAuthUi } from "@/components/auth/auth-store";
 
 type MapFloatingDockProps = {
   isDrawActive: boolean;
@@ -77,6 +79,8 @@ function DockItem({
 /** 맥OS 독 느낌 — 가로 pill, 아이콘만, blur 글라스 */
 export function MapFloatingDock({ isDrawActive, onCourseCreate }: MapFloatingDockProps) {
   const { active, openPanel } = useExplorePanels();
+  const { data: session } = authClient.useSession();
+  const { openAuth } = useAuthUi();
 
   return (
     <div
@@ -134,7 +138,13 @@ export function MapFloatingDock({ isDrawActive, onCourseCreate }: MapFloatingDoc
             active={active === "me"}
             label="내 정보"
             tooltip="프로필·내 정보·설정"
-            onClick={() => openPanel("me")}
+            onClick={() => {
+              if (session?.user) {
+                openPanel("me");
+              } else {
+                openAuth({ type: "generic" });
+              }
+            }}
           >
             <UserRound className={iconClass} aria-hidden />
           </DockItem>
