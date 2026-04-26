@@ -1,84 +1,104 @@
-<div style="text-align: left;">
-  <img width="360" style="background: rgba(255,255,255,0.85);" src="./images/RunHub-logo-black.png" alt="Description" />
+<div align="left">
+  <img width="360" src="./images/RunHub-logo-black.png" alt="RunHub" />
 </div>
 
-[![Hits](https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fgithub.com%2Fthisisdj%2FRunHub&count_bg=%2379C83D&title_bg=%23555555&icon=&icon_color=%23E7E7E7&title=hits&edge_flat=true)](https://hits.seeyoufarm.com)
 
-# Explore, Share, Achieve! RunHub 런허브 🏃
+# RunHub 런허브 · Explore, Share, Achieve
 
-## 프로젝트 소개
-RunHub는 러닝 애호가들을 위한 혁신적인 플랫폼입니다. 이제 자신만의 러닝 코스를 지도 앱에서 직접 디자인하고 저장할 수 있습니다. RunHub의 직관적인 인터페이스를 통해 코스의 경로 등을 손쉽게 설정해보세요.
+러너를 위한 웹 앱입니다. **브이월드(VWorld)** 지도 위에서 러닝 코스를 그리고 등록하고, 다른 사람의 코스를 탐색·저장·리뷰할 수 있습니다. **러닝 피드**로 기록을 남기고, **카카오 로그인**으로 계정을 연동합니다.
 
-또한, 다른 사용자들이 만든 코스를 탐색하고 리뷰를 남길 수 있는 기능도 제공합니다. 친구들이나 동료 러너들이 추천한 코스를 따라 해보며 새로운 러닝 경로를 발견해보세요.
+## 주요 기능
 
-RunHub와 함께라면 매일매일의 러닝이 더욱 즐겁고 의미 있는 시간이 될 것입니다. 나만의 러닝 여정을 시작해보세요!
+| 영역 | 설명 |
+|------|------|
+| **탐색** | 지도에서 코스 마커·카드 확인, 코스 상세·리뷰·평점 |
+| **코스 작성** | 지도에 경로 그리기 후 등록 |
+| **계정** | Better Auth + 카카오 OAuth, 프로필(이름·소개·이미지) |
+| **피드** | 러닝 관련 게시물 작성·열람 |
+| **기타** | 저장한 코스, 알림 패널, 급상승 코스 등 |
 
-## Todo
-### 공통
-- [x] 알림창 문구 및 라이브러리 적용
-- [ ] 데이터페칭 `SWR` 도입
-### 지도
-- [x] `Vworld WMTS` 적용
-- [ ] 지도 회전 방지
-- [x] 내 위치 이동 기능
-### 코스 상세정보 및 리뷰
-- [ ] 코스 등록자 표기
-- [ ] 리뷰 추천 / 비추천
-- [ ] 리뷰 삭제 기능
-### 코스 그리기 / 저장
-- [ ] 코스 그리기 되돌리기 기능 구현
-- [ ] 코스 입력 시 인풋창 올라가는 현상
-- [ ] 사용자의 입력 코스 👉 러닝코스 자동인식
+## 기술 스택
 
-## 사용된 기술 스택
+- **앱**: [Next.js](https://nextjs.org/) 15 · React 18 · TypeScript  
+- **지도**: [OpenLayers](https://openlayers.org/) · [rlayers](https://github.com/mmacaula/rlayers)  
+- **UI**: Tailwind CSS 4 · [shadcn/ui](https://ui.shadcn.com/) (Radix) · Lucide  
+- **데이터**: PostgreSQL · [Drizzle ORM](https://orm.drizzle.team/)  
+- **인증**: [Better Auth](https://www.better-auth.com/) · 카카오 소셜 로그인  
+- **기타**: SWR · Sonner(toast) · dayjs  
 
-### Environment
-![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=Git&logoColor=white)
-![Github](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=GitHub&logoColor=white)             
+## 사전 요구 사항
 
-### Config
-![npm](https://img.shields.io/badge/npm-CB3837?style=for-the-badge&logo=npm&logoColor=white)        
+- Node.js 20 권장  
+- [pnpm](https://pnpm.io/)  
+- PostgreSQL 연결 정보(로컬 또는 [Neon](https://neon.tech/) 등)  
+- [카카오 개발자](https://developers.kakao.com/) 앱(REST API 키, Redirect URI)  
+- [브이월드](https://www.vworld.kr/) OpenAPI 인증키(지도 타일)
 
-### Development
-- Frontend<br>
-![OpenLayers](https://img.shields.io/badge/Openlayers-1F6B75?style=for-the-badge&logo=Openlayers&logoColor=white)
-![Rlayers](https://img.shields.io/badge/Rlayers-1F6B75?style=for-the-badge&logo=Openlayers&logoColor=white)
-![typescript](https://img.shields.io/badge/typescript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Next.js](https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=Next.js&logoColor=white)
-![NextUI](https://img.shields.io/badge/nextui-000000?style=for-the-badge&logo=nextui&logoColor=white)<br>
-- Backend<br>
-![prisma](https://img.shields.io/badge/prisma-2D3748?style=for-the-badge&logo=prisma&logoColor=white)
-![postgresql](https://img.shields.io/badge/postgresql-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
-![Auth.js](https://img.shields.io/badge/Auth.js-6614D9?style=for-the-badge&logo=Next.js&logoColor=white)
+## 로컬 실행
 
-## Hosting Yourself
-### Installation
-``` bash
-$ git clone https://github.com/thisisdj/RunHub.git
-$ cd RunHub
-$ npm install
-$ mkdir .env
-$ mkdir .env.local
-```
-
-### Edit Environment
-``` bash
-./.env 
-DATABASE_URL="postgresql://postgres:*insertuserpasswd*!@localhost:5432/postgres?schema=public" # Connect your existing database
-```
-``` bash
-$ npx prisma db push
-```
 ```bash
-$ npx auth secret # Create your AUTH_SECRET
-```
-```bash
-./.env.local
-AUTH_SECRET=                # auth.js cli
-AUTH_KAKAO_ID=              # 카카오 발급
-AUTH_KAKAO_SECRET=          # 카카오 발급
-```
-``` bash
-$ npm run start
+git clone https://github.com/d0ngjini/RunHub.git
+cd RunHub
+pnpm install
 ```
 
+저장소에는 비밀이 없는 **`/.env.example`** 만 포함되어 있습니다. 로컬에서는 이 파일을 **`/.env`** 로 복사한 뒤 값을 채워야 합니다(`.env`는 git에 올리지 마세요).
+
+```bash
+cp .env.example .env
+```
+
+이후 `.env`를 열어 각 변수를 실제 값으로 바꿉니다. 로컬 기준 예시는 다음과 같습니다.
+
+```env
+# DB (PostgreSQL)
+DATABASE_URL="postgresql://USER:PASSWORD@HOST:5432/DBNAME?sslmode=require"
+
+# Better Auth — 브라우저·서버가 접근하는 앱 URL (로컬 예시)
+BETTER_AUTH_BASE_URL=http://localhost:3000
+NEXT_PUBLIC_BETTER_AUTH_BASE_URL=http://localhost:3000
+BETTER_AUTH_SECRET=        # 긴 랜덤 문자열 (예: openssl rand -base64 32)
+
+# 카카오 로그인
+KAKAO_CLIENT_ID=
+KAKAO_CLIENT_SECRET=
+
+# 지도 (VWorld)
+NEXT_PUBLIC_VWORLD_TOKEN=
+```
+
+`.env.example`에 없는 주석이 필요하면 위 블록을 참고하면 됩니다.
+
+DB 스키마를 DB에 맞출 때(로컬 개발):
+
+```bash
+pnpm exec drizzle-kit push
+```
+
+`drizzle/`에 SQL 마이그레이션이 있으면 팀 규칙에 맞게 `drizzle-kit migrate` 등으로 적용하면 됩니다.
+
+개발 서버:
+
+```bash
+pnpm dev
+```
+
+브라우저에서 `http://localhost:3000` — 카카오 콘솔의 **Redirect URI**에 `http://localhost:3000/api/auth/callback/kakao`(또는 배포 도메인에 맞는 URL)를 등록해야 합니다.
+
+## 스크립트
+
+| 명령 | 설명 |
+|------|------|
+| `pnpm dev` | 개발 서버 |
+| `pnpm build` | 프로덕션 빌드 |
+| `pnpm start` | 빌드 결과 실행 |
+| `pnpm lint` | ESLint |
+
+## 로드맵 / 할 일 (요약)
+
+- 지도 회전 고정, 코스 그리기 되돌리기 등 편의 기능 보강  
+- 리뷰 추천·삭제, 코스 등록자 표시 등 커뮤니티 기능 확장  
+
+---
+
+질문·이슈는 GitHub Issues로 남겨 주세요.
