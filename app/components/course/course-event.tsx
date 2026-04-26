@@ -11,7 +11,9 @@ export default function CourseEvent(props: any) {
                     current ? (
                         <div>
                             <RFeature geometry={current.getGeometry()} onSingleClick={(e: RFeatureUIEvent) => {
-                                getSingleCourse(e.target.getProperties().id)
+                                getSingleCourse(e.target.getProperties().id, {
+                                    name: e.target.getProperties().name,
+                                })
                             }}
                                 properties={
                                     {

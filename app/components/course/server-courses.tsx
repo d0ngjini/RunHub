@@ -1,4 +1,4 @@
-import {RFeature, RFeatureUIEvent, RLayerVector} from "rlayers";
+import { RFeature, RFeatureUIEvent, RLayerVector } from "rlayers";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {LineString} from "ol/geom";
 import {Fill, Stroke, Style} from "ol/style";
@@ -7,7 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import type { Course } from "@/lib/domain-types";
 
 export default function ServerCourses(props: any) {
-    const { towns, current, setCurrent, prevCourse, serverCourses, isDrawState, config, getSingleCourse } = props;
+    const { towns, current, setCurrent, serverCourses, isDrawState, config, getSingleCourse } = props;
     const [selectedFeature, setSelectedFeature] = useState<Feature | null>();
     const [myCourses, setMyCourses] = useState<Course[]>([]);
     const [otherCourses, setOtherCourses] = useState<Course[]>([]);
@@ -145,9 +145,9 @@ export default function ServerCourses(props: any) {
             >
                 {
                     !isDrawState &&
-                    myCourses.map((course: any, i: number) => (
+                    myCourses.map((course: any) => (
                         <RFeature
-                            key={i}
+                            key={course.id}
                             geometry={
                                 new LineString(course.flatCoordinates)
                             }
@@ -157,8 +157,9 @@ export default function ServerCourses(props: any) {
                                     name: course.name,
                                 }
                             }
-                            onSingleClick={(e: RFeatureUIEvent) => {
-                                getSingleCourse(e.target.getProperties().id)
+                            onClick={(e: RFeatureUIEvent) => {
+                                const p = e.target.getProperties() as { id: unknown; name?: string };
+                                getSingleCourse(String(p.id ?? ""), { name: p.name });
                             }}
                         />
                     ))
@@ -177,9 +178,9 @@ export default function ServerCourses(props: any) {
             >
                 {
                     !isDrawState &&
-                    otherCourses.map((course: any, i: number) => (
+                    otherCourses.map((course: any) => (
                         <RFeature
-                            key={i}
+                            key={course.id}
                             geometry={
                                 new LineString(course.flatCoordinates)
                             }
@@ -189,8 +190,9 @@ export default function ServerCourses(props: any) {
                                     name: course.name,
                                 }
                             }
-                            onSingleClick={(e: RFeatureUIEvent) => {
-                                getSingleCourse(e.target.getProperties().id)
+                            onClick={(e: RFeatureUIEvent) => {
+                                const p = e.target.getProperties() as { id: unknown; name?: string };
+                                getSingleCourse(String(p.id ?? ""), { name: p.name });
                             }}
                         />
                     ))

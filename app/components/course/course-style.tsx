@@ -43,11 +43,11 @@ export default function CourseStyle(props: any) {
                                 <RStroke color={hlStrokeColor} width={newHLStrokeWidth}/>
                             </RStyle>
                             <RStyle zIndex={0}>
-                                <RStroke color={newBaseStrokeWidth} width={newBaseStrokeWidth}/>
+                                <RStroke color={baseStrokeColor} width={newBaseStrokeWidth}/>
                             </RStyle>
                         </>
                     )
-                }, [hlStrokeColor, newBaseStrokeWidth, newHLStrokeWidth])}
+                }, [baseStrokeColor, hlStrokeColor, newBaseStrokeWidth, newHLStrokeWidth])}
             />
         </>
     )
