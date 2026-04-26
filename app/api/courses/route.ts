@@ -53,7 +53,8 @@ export async function POST(request: Request) {
     if (inserted.length > 0) {
         return Response.json({
             status: 200,
-            message: 'successfully created.'
+            message: "successfully created.",
+            id: inserted[0]!.id,
         });
     } else {
         return Response.json({

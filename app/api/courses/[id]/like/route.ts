@@ -34,40 +34,51 @@ export async function POST(request: Request) {
     }
 
     const param = await request.json();
+    const userId = session.user.id;
+    const courseId = String(param?.courseId ?? "");
+    if (!courseId) {
+      return Response.json({ status: 400, message: "courseId is required" });
+    }
 
     const liked = await db
       .select({ id: courseLike.id })
       .from(courseLike)
-      .where(and(eq(courseLike.courseId, param.courseId), eq(courseLike.userId, param.userId)))
+      .where(and(eq(courseLike.courseId, courseId), eq(courseLike.userId, userId)))
       .then((rows) => rows[0]);
 
     const updatedAt = new Date();
 
+    const isLike = Boolean(param.isLiked);
+
     if (!liked) {
         await db.insert(courseLike).values({
           id: randomUUID(),
-          courseId: param.courseId,
-          userId: param.userId,
-          isLike: Boolean(param.isLiked),
+          courseId,
+          userId,
+          isLike,
           updatedAt,
-        });
-
-        return Response.json({
-            status: 200,
-            message: 'successfully created.'
         });
     } else {
         await db
           .update(courseLike)
           .set({
-            isLike: Boolean(param.isLiked),
+            isLike,
             updatedAt,
           })
           .where(eq(courseLike.id, liked.id));
-
-        return Response.json({
-            status: 200,
-            message: 'successfully updated.'
-        });
     }
+
+    const [likeCountRow] = await db
+      .select({ count: sql<number>`count(*)` })
+      .from(courseLike)
+      .where(and(eq(courseLike.courseId, courseId), eq(courseLike.isLike, true)));
+
+    const likedCount = Number(likeCountRow?.count ?? 0);
+
+    return Response.json({
+      status: 200,
+      message: "success",
+      isLiked: isLike,
+      likedCount,
+    });
 }
