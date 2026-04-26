@@ -7,6 +7,16 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const nextConfig = {
     reactStrictMode: false,
     outputFileTracingRoot: __dirname,
+    async redirects() {
+        return [
+            { source: "/login", destination: "/explore", permanent: false },
+            { source: "/saved", destination: "/explore", permanent: false },
+            { source: "/create", destination: "/explore", permanent: false },
+            { source: "/notifications", destination: "/explore", permanent: false },
+            { source: "/me", destination: "/explore", permanent: false },
+            { source: "/me/:path*", destination: "/explore", permanent: false },
+        ];
+    },
     // compiler: {
     //     removeConsole: {
     //         exclude: ['error', 'warning']
